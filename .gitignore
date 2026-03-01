@@ -1,0 +1,34 @@
+/build*/
+/out/
+/bld/
+cmake-build-*
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+_deps/
+
+# Visual Studio
+.vs/
+*.VC.db
+*.opensdf
+*.sdf
+*.suo
+# CLion/JetBrains
+.idea/
+# QtCreator
+*.user
+
+# OS generated files
+.DS_Store
+ehthumbs.db
+# Build results
+[Dd]ebug/
+[Rr]elease/
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.a
