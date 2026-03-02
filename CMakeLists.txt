@@ -1,7 +1,4 @@
-﻿# CMakeList.txt : CMake project for OpenGLFun, include source and define
-# project specific logic here.
-#
-cmake_minimum_required (VERSION 3.11)
+﻿cmake_minimum_required (VERSION 3.11)
 project ("OpenGLFun")
 
 set(CMAKE_CXX_STANDARD 23)
@@ -20,6 +17,7 @@ add_compile_definitions(
 
 target_link_libraries(OpenGLFun PRIVATE glfw glad glm imgui)
 
+#include shader files in build directory
 add_custom_command(
     TARGET OpenGLFun POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory

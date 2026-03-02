@@ -62,7 +62,7 @@ FetchContent_Declare(
 FetchContent_GetProperties(imgui)
 if (NOT imgui_POPULATED)
     FetchContent_MakeAvailable(imgui)
-    #have to create the library manually since imgui doesn't have  a CMakeLists.txt file
+    #have to create the library manually since imgui doesn't have a CMakeLists.txt file
     add_library(imgui
         ${imgui_SOURCE_DIR}/imgui.cpp
         ${imgui_SOURCE_DIR}/imgui.h
