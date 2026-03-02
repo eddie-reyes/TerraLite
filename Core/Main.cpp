@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <fstream>
@@ -29,12 +29,12 @@ static inline ShaderProgramSource ParseShader(const std::string& filepath) {
 	ShaderType type = ShaderType::NONE;
 
 	while (getline(stream, line)) {
-		
+
 		if (line.find("#shader") != std::string::npos) {
 
 			if (line.find("vertex") != std::string::npos) {
 				type = ShaderType::VERTEX;
-					
+
 			}
 			else if (line.find("fragment") != std::string::npos) {
 				type = ShaderType::FRAGMENT;
@@ -48,7 +48,7 @@ static inline ShaderProgramSource ParseShader(const std::string& filepath) {
 
 	return { ss[0].str(), ss[1].str() };
 }
- 
+
 static inline unsigned int CompileShader(unsigned int type, const std::string& source) {
 
 	//create vertex shader
@@ -70,7 +70,7 @@ static inline unsigned int CompileShader(unsigned int type, const std::string& s
 		int length;
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 		std::string message = std::string(length, ' ');
-		glGetShaderInfoLog(id, length, &length, (char *)message.c_str());
+		glGetShaderInfoLog(id, length, &length, (char*)message.c_str());
 		std::cerr << "Failed to compile " << (type == GL_FRAGMENT_SHADER ? "fragment" : "vertex") << " shader!\n" << message << '\n';
 		glDeleteShader(id);
 		return 0;
@@ -79,7 +79,7 @@ static inline unsigned int CompileShader(unsigned int type, const std::string& s
 	return id;
 }
 
-static inline unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader){
+static inline unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader) {
 
 	//create program for GPU
 	unsigned int program = glCreateProgram();
@@ -116,7 +116,7 @@ int main(void)
 
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
-	GLFWwindow * handle = glfwCreateWindow(640, 480, "Having Fun", nullptr, nullptr);
+	GLFWwindow* handle = glfwCreateWindow(640, 480, "Having Fun", nullptr, nullptr);
 
 	if (!handle)
 	{
@@ -134,7 +134,7 @@ int main(void)
 		std::cerr << "Failed to initialize GLAD, cannot proceed!\n";
 		return -12;
 	}
-	
+
 	std::cout << "glad v" << GLAD_VERSION_MAJOR(loadGLresult) << '.' << GLAD_VERSION_MINOR(loadGLresult) << " Started\n";
 
 	//vao stores the state of the vertex atrributes for a specific buffer or set of buffers
@@ -151,11 +151,11 @@ int main(void)
 		-0.5f,  0.5f, // 3
 
 	};
-	
+
 	//we can use indicies to reuse verticies and draw the square with 2 triangles instead of 4 verticies, this is more efficient since we are reusing verticies instead of duplicating them for each triangle
 	unsigned int indicies[] = {
-		0, 1, 2, 
-		2, 3, 0  
+		0, 1, 2,
+		2, 3, 0
 	};
 
 	//holds memory location for buffer
@@ -182,7 +182,7 @@ int main(void)
 
 	GLuint ibo;
 	//create index butter
-	glGenBuffers(1, &ibo) ;
+	glGenBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	//copy the data from our indicies array into the index buffer, we specify the size of the data and how we want to use it (static draw since it wont be changed during runtime)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(GLuint), indicies, GL_STATIC_DRAW);
@@ -210,13 +210,13 @@ int main(void)
 		glfwPollEvents();
 		if (r > 1.0f) {
 			r = 0.0f;
-		
+
 		}
 		r += 0.01f;
 
 
 		glfwSwapBuffers(handle);
-	} 
+	}
 
 	glDeleteProgram(shader);
 
