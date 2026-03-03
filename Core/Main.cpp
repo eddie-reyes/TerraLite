@@ -1,6 +1,7 @@
 #include <iostream>
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/matrix_transform.hpp>
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -111,7 +112,6 @@ int main(void)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 
 	//core profile for modern opengl
-	//vao object is not initalized for us, so we have to create it manually
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
@@ -187,6 +187,23 @@ int main(void)
 	//copy the data from our indicies array into the index buffer, we specify the size of the data and how we want to use it (static draw since it wont be changed during runtime)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(GLuint), indicies, GL_STATIC_DRAW);
 
+	int width, height;
+	glfwGetFramebufferSize(handle, &width, &height);
+
+
+	glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+
+	glm::mat4 View = glm::lookAt(
+		glm::vec3(4, 3, 3), // Camera is at (4,3,3), in World Space
+		glm::vec3(0, 0, 0), // and looks at the origin
+		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+	);
+
+	// Model matrix: an identity matrix (model will be at the origin)
+	glm::mat4 Model = glm::mat4(1.0f);
+	// Our ModelViewProjection: multiplication of our 3 matrices
+	glm::mat4 mvp = proj * View * Model; // Remember, matrix multiplication is the other way around
+
 	ShaderProgramSource source = ParseShader("shaders/basic.shader");
 
 	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
@@ -196,7 +213,9 @@ int main(void)
 
 	//retrieve location of the uniform variable in the shader and set its value to a color (RGBA)
 	int location = glGetUniformLocation(shader, "u_Color");
-	glUniform4f(location, r, 0.3f, 0.8f, 1.0f);
+	int matrixID = glGetUniformLocation(shader, "MVP");
+
+	glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
 
 	while (!glfwWindowShouldClose(handle))
 	{

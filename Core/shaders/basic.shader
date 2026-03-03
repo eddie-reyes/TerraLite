@@ -1,11 +1,14 @@
 #shader vertex
 #version 410 core
+
+uniform mat4 MVP;
 		
 layout(location = 0) in vec4 position;
 		
 void main()
 {
-	gl_Position = position;
+	//multiplication order matters
+	gl_Position = MVP * position;
 };
 
 #shader fragment
