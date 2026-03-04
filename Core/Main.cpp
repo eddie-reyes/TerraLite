@@ -6,6 +6,12 @@
 #include <string>
 #include <sstream>
 
+double mouseDeltaX = 0, mouseDeltaY = 0;
+double mouseX, mouseY;
+double scrollY;
+bool isMiddleButtonPressed = false;
+bool isScrollActive = false;
+
 struct ShaderProgramSource {
 	std::string VertexSource;
 	std::string FragmentSource;
@@ -14,6 +20,18 @@ struct ShaderProgramSource {
 enum class ShaderType {
 	NONE = -1, VERTEX = 0, FRAGMENT = 1
 };
+
+static inline void zoomPlane(glm::mat4& in_matrix, double yoffset) {
+	
+}
+
+static inline void rotatePlaneAlongZ(glm::mat4& in_matrix) {
+
+
+	in_matrix = glm::rotate(in_matrix, glm::radians((float)(-mouseDeltaX * 0.5)), glm::vec3(0, 0, 1));
+	// if you still want the plane initially facing a certain way:
+
+}
 
 
 static inline ShaderProgramSource ParseShader(const std::string& filepath) {
@@ -116,7 +134,7 @@ int main(void)
 
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
-	GLFWwindow* handle = glfwCreateWindow(640, 480, "Having Fun", nullptr, nullptr);
+	GLFWwindow* handle = glfwCreateWindow(1920, 1080, "Having Fun", nullptr, nullptr);
 
 	if (!handle)
 	{
@@ -188,21 +206,24 @@ int main(void)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(GLuint), indicies, GL_STATIC_DRAW);
 
 	int width, height;
-	glfwGetFramebufferSize(handle, &width, &height);
+	glfwGetFramebufferSize(handle, &width, &height); 
 
 
-	glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+	glm::mat4 proj = glm::perspective(glm::radians(90.0f), (float)width / (float)height, 0.1f, 100.0f);
 
 	glm::mat4 View = glm::lookAt(
-		glm::vec3(4, 3, 3), // Camera is at (4,3,3), in World Space
+		glm::vec3(2, 2, 2), // Camera is at (4,3,3), in World Space
 		glm::vec3(0, 0, 0), // and looks at the origin
 		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
 	);
 
 	// Model matrix: an identity matrix (model will be at the origin)
 	glm::mat4 Model = glm::mat4(1.0f);
+	Model = glm::rotate(Model, glm::radians(90.0f), glm::vec3(1, 0, 0)); // Rotate the model 90 degrees around the x-axis to make it face the camera initially
+
 	// Our ModelViewProjection: multiplication of our 3 matrices
 	glm::mat4 mvp = proj * View * Model; // Remember, matrix multiplication is the other way around
+
 
 	ShaderProgramSource source = ParseShader("shaders/basic.shader");
 
@@ -215,7 +236,31 @@ int main(void)
 	int location = glGetUniformLocation(shader, "u_Color");
 	int matrixID = glGetUniformLocation(shader, "MVP");
 
-	glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
+	glfwSetMouseButtonCallback(handle, [](GLFWwindow* handle, int button, int action, int mods)
+		{
+
+			switch (action)
+			{
+				case GLFW_PRESS:
+				{
+					if (button == GLFW_MOUSE_BUTTON_MIDDLE && !isMiddleButtonPressed) { isMiddleButtonPressed = true; }
+					break;
+				}
+				case GLFW_RELEASE:
+				{
+					if (button == GLFW_MOUSE_BUTTON_MIDDLE) { isMiddleButtonPressed = false; }
+					
+					break;
+				}
+			}
+		});
+
+
+	glfwSetScrollCallback(handle, [](GLFWwindow* handle, double xoffset, double yoffset) {
+			
+		scrollY = yoffset;
+		
+	});
 
 	while (!glfwWindowShouldClose(handle))
 	{
@@ -223,18 +268,44 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT);
 		//set uniform
 		glUniform4f(location, r, 0.3f, 0.8f, 1.0f);
-		//elements are triangles, we have 6 indicies, type of indicies is unsigned int, offset is 0 since index data starts at the beginning of the buffer
+		glUniformMatrix4fv(matrixID, 1, GL_FALSE, &mvp[0][0]);
+
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
-		glfwPollEvents();
 		if (r > 1.0f) {
 			r = 0.0f;
 
 		}
 		r += 0.01f;
+		
 
 
 		glfwSwapBuffers(handle);
+
+		glfwPollEvents();
+
+		if (isMiddleButtonPressed) {
+		
+			double currMouseX = mouseX;
+			double currMouseY = mouseY;
+			glfwGetCursorPos(handle, &mouseX, &mouseY);
+			mouseDeltaX = mouseX - currMouseX;
+			mouseDeltaY = mouseY - currMouseY;
+
+			rotatePlaneAlongZ(Model);
+
+			mvp = proj * View * Model;
+
+		}
+		
+
+
+		zoomPlane(Model, scrollY);
+		mvp = proj * View * Model;
+
+
+
+
 	}
 
 	glDeleteProgram(shader);
