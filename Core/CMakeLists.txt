@@ -1,4 +1,4 @@
-set(SOURCES "Main.cpp" "Renderer.cpp" "Vendor/stb_image.cpp" "Vendor/stb_image.cpp" "Renderer/Texture.h")
+set(SOURCES "Main.cpp" "Application.h" "Application.cpp"  "Vendor/stb_image.cpp" "Vendor/stb_image.cpp" "Renderer/Renderer.h")
 
 # Add source to this project's executable.
 add_executable (OpenGLFun)
@@ -7,7 +7,7 @@ target_sources(OpenGLFun PRIVATE ${SOURCES})
 
 target_link_libraries(OpenGLFun PRIVATE glfw glad glm imgui)
 
-target_include_directories(OpenGLFun PRIVATE Math Vendor UI)
+target_include_directories(OpenGLFun PRIVATE Utils Vendor UI)
 
 add_custom_command(
     TARGET OpenGLFun POST_BUILD
