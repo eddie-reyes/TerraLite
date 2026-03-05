@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -9,6 +9,7 @@
 double mouseDeltaX = 0, mouseDeltaY = 0;
 double mouseX, mouseY;
 double scrollY;
+float angle = 0;
 bool isMiddleButtonPressed = false;
 bool isScrollActive = false;
 
@@ -25,11 +26,15 @@ static inline void zoomPlane(glm::mat4& in_matrix, double yoffset) {
 	
 }
 
-static inline void rotatePlaneAlongZ(glm::mat4& in_matrix) {
+static inline void orbitAroundPlane(glm::mat4& View, glm::mat4& Model) {
 
+	if (abs(mouseDeltaX) <= 0.1f && abs(mouseDeltaY) <= 0.1f) return; 
 
-	in_matrix = glm::rotate(in_matrix, glm::radians((float)(-mouseDeltaX * 0.5)), glm::vec3(0, 0, 1));
-	// if you still want the plane initially facing a certain way:
+	View = glm::rotate(View, glm::radians((float)mouseDeltaY), glm::vec3(1, 0, 0));
+
+	glm::vec3 rotationMatrix = glm::normalize(glm::vec3(Model * glm::vec4(0, 0, 1, 0)));
+	glm::vec3 normal = glm::cross(rotationMatrix, glm::vec3(1, 0, 0));
+	Model = glm::rotate(Model, glm::radians((float)-mouseDeltaX), normal);
 
 }
 
@@ -212,7 +217,7 @@ int main(void)
 	glm::mat4 proj = glm::perspective(glm::radians(90.0f), (float)width / (float)height, 0.1f, 100.0f);
 
 	glm::mat4 View = glm::lookAt(
-		glm::vec3(2, 2, 2), // Camera is at (4,3,3), in World Space
+		glm::vec3(0, 2, 2), // Camera is at (4,3,3), in World Space
 		glm::vec3(0, 0, 0), // and looks at the origin
 		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
 	);
@@ -220,6 +225,7 @@ int main(void)
 	// Model matrix: an identity matrix (model will be at the origin)
 	glm::mat4 Model = glm::mat4(1.0f);
 	Model = glm::rotate(Model, glm::radians(90.0f), glm::vec3(1, 0, 0)); // Rotate the model 90 degrees around the x-axis to make it face the camera initially
+	Model = glm::rotate(Model, glm::radians(45.0f), glm::vec3(0, 0, 1)); 
 
 	// Our ModelViewProjection: multiplication of our 3 matrices
 	glm::mat4 mvp = proj * View * Model; // Remember, matrix multiplication is the other way around
@@ -272,13 +278,8 @@ int main(void)
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
-		if (r > 1.0f) {
-			r = 0.0f;
-
-		}
+		if (r > 1.0f) r = 0.0f;
 		r += 0.01f;
-		
-
 
 		glfwSwapBuffers(handle);
 
@@ -292,20 +293,12 @@ int main(void)
 			mouseDeltaX = mouseX - currMouseX;
 			mouseDeltaY = mouseY - currMouseY;
 
-			rotatePlaneAlongZ(Model);
+			orbitAroundPlane(View, Model);
 
 			mvp = proj * View * Model;
 
 		}
 		
-
-
-		zoomPlane(Model, scrollY);
-		mvp = proj * View * Model;
-
-
-
-
 	}
 
 	glDeleteProgram(shader);
