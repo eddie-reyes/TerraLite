@@ -32,6 +32,8 @@ void TerrainGeometry::BuildPlane()
 			m_indices.push_back(i * m_Resolution + (j + 1));
 			m_indices.push_back(i * m_Resolution + j);
 
+			m_triangleCount += 2;
+
 		}
 	}
 

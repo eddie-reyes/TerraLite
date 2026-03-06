@@ -1,5 +1,5 @@
 #shader vertex
-#version 410 core
+#version 460 core
 
 uniform mat4 MVP;
 		

@@ -16,9 +16,13 @@ public:
 
 	std::vector<unsigned int>& GetIndices() { return m_indices; }
 
+	size_t GetTriangleCount() const { return m_triangleCount; }
+
 private:
 
 	size_t m_Resolution = 512;
+
+	size_t m_triangleCount = 0;
 
 	std::vector<float> m_vertices;
 

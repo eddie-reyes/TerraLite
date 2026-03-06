@@ -87,6 +87,8 @@ void Application::Run()
 
 		m_Renderer.Draw(dt);
 
+		glfwSwapBuffers(m_WindowHandle);
+
 	}
 }
 

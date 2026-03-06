@@ -136,38 +136,7 @@ int main(void)
 	Application app(spec);
 	app.Run();
 
-	//std::cout << "Starting program...\n";
 
-	//glfwInit();
-
-	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-
-	////core profile for modern opengl
-	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	//glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-
-	//GLFWwindow* handle = glfwCreateWindow(1920, 1080, "Having Fun", nullptr, nullptr);
-
-	//if (!handle)
-	//{
-	//	std::cerr << "Failed to create GLFW window, cannot proceed!\n";
-	//	return -11;
-	//}
-
-	//std::cout << "GLFW v" << GLFW_VERSION_MAJOR << '.' << GLFW_VERSION_MINOR << " Initalized Window\n";
-
-	//glfwMakeContextCurrent(handle);
-	//glfwSwapInterval(1);
-	//GLuint loadGLresult = gladLoadGL(glfwGetProcAddress);
-
-	//if (!loadGLresult) {
-	//	std::cerr << "Failed to initialize GLAD, cannot proceed!\n";
-	//	return -12;
-	//}
-
-	//std::cout << "glad v" << GLAD_VERSION_MAJOR(loadGLresult) << '.' << GLAD_VERSION_MINOR(loadGLresult) << " Started\n";
 
 	////vao stores the state of the vertex atrributes for a specific buffer or set of buffers
 	////this prevents us from having to set up the vertex attributes every time we want to draw a new peice of geometry, which may or may not have different requirement for its vertices
