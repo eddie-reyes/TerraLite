@@ -1,40 +1,40 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include <GLFW/glfw3.h>
 #include <string>
 
-
-namespace Core {
-
-	struct ApplicationSpecification
-	{
-		std::string Name;
-		unsigned int WindowWidth;
-		unsigned int WindowHeight;
-	};
-
-	class Application
-	{
-	public:
-		Application(const ApplicationSpecification& specification);
-		~Application();
-
-		void Run();
-		void Stop();
+#include "Renderer/Renderer.h"
 
 
-		static Application& Get();
-		static float GetTime();
 
-	private:
+struct ApplicationSpecification
+{
+	std::string Name;
+	unsigned int WindowWidth;
+	unsigned int WindowHeight;
+	unsigned int HeightMapResolution;
+};
 
-		bool m_Running = false;
+class Application
+{
+public:
+	Application(const ApplicationSpecification& specification);
+	~Application();
 
-		ApplicationSpecification m_Specification;
+	void Run();
+	void Stop();
 
-		GLFWwindow* m_WindowHandle;
+	static Application& Get();
+	static float GetTime();
+	ApplicationSpecification& GetAppSpecification() { return m_Specification; }
 
-	};
+private:
 
-}
+	bool m_Running = false;
+
+	ApplicationSpecification m_Specification;
+
+	Renderer::Renderer m_Renderer;
+
+	GLFWwindow* m_WindowHandle;
+
+};
