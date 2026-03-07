@@ -71,6 +71,8 @@ namespace Renderer {
 
 		void AttachUniforms() const ;
 
+		void HandleMouseInput(GLFWwindow* handle, int button, int action, int mods);
+
 
 	private:
 

@@ -23,6 +23,7 @@ namespace Renderer {
 			glm::vec3(0, 1, 0)
 		);
 
+		//initial transformation for the plane
 		m_MVPMatrix.Model = glm::mat4(1.0f);
 		m_MVPMatrix.Model = glm::rotate(m_MVPMatrix.Model, glm::radians(90.0f), glm::vec3(1, 0, 0));
 		m_MVPMatrix.Model = glm::rotate(m_MVPMatrix.Model, glm::radians(45.0f), glm::vec3(0, 0, 1));
@@ -37,7 +38,7 @@ namespace Renderer {
 
 		m_GeometryBuffers.emplace_back(std::make_unique<GeometryBufferData>(vertices.data(), vertices.size(), indices.data(), indices.size()));
 
-		
+		//glfwSetMouseButtonCallback(window, HandleMouseInput);
 	}
 
 	void Renderer::Draw(float dt) {
@@ -45,6 +46,11 @@ namespace Renderer {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		AttachUniforms();
+
+		if (m_TerrainGeometry.GetOrbitEnabled()) {
+
+			m_TerrainGeometry.OrbitAroundCenter(m_MVPMatrix.View, m_MVPMatrix.Model, 1.0f, 1.0f);
+;		}
 
 		glDrawElements(GL_TRIANGLES, m_TerrainGeometry.GetTriangleCount() * 6, GL_UNSIGNED_INT, nullptr);
 
@@ -61,6 +67,25 @@ namespace Renderer {
 			case UniformType::MVP_UNIFORM:
 				glm::mat4 mvp = m_MVPMatrix.Compute();
 				glUniformMatrix4fv(uniform.Location, 1, GL_FALSE, &mvp[0][0]);
+				break;
+			}
+		}
+
+	}
+
+	void Renderer::HandleMouseInput(GLFWwindow* window, int button, int action, int mods)
+	{
+		switch (action)
+		{
+			case GLFW_PRESS:
+			{
+				if (button == GLFW_MOUSE_BUTTON_MIDDLE) { m_TerrainGeometry.ToggleOrbitEnabled(); }
+				break;
+			}
+			case GLFW_RELEASE:
+			{
+				if (button == GLFW_MOUSE_BUTTON_MIDDLE) { m_TerrainGeometry.ToggleOrbitEnabled(); }
+
 				break;
 			}
 		}
