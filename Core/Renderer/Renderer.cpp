@@ -42,24 +42,24 @@ namespace Renderer {
 		glfwSetMouseButtonCallback(window, [](GLFWwindow * window, int button, int action, int mods)
 		{
 
-				Application& app = Application::Get();
+			Application& app = Application::Get();
 
-				switch (action)
+			switch (action)
+			{
+				case GLFW_PRESS:
 				{
-					case GLFW_PRESS:
-					{
 						
-						MouseButtonPressedEvent event(button);
-						app.RaiseEvent(event);
-						break;
-					}
-					case GLFW_RELEASE:
-					{
-						MouseButtonReleasedEvent event(button);
-						app.RaiseEvent(event);
-						break;
-					}
+					MouseButtonPressedEvent event(button);
+					app.RaiseEvent(event);
+					break;
 				}
+				case GLFW_RELEASE:
+				{
+					MouseButtonReleasedEvent event(button);
+					app.RaiseEvent(event);
+					break;
+				}
+			}
 
 		});
 	}

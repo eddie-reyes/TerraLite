@@ -13,7 +13,7 @@ namespace Utils {
 	inline void OrbitAroundCenter(glm::mat4& View, glm::mat4& Model, float mouseDeltaX, float mouseDeltaY)
 	{
 
-		if (abs(mouseDeltaX) <= 0.01f || abs(mouseDeltaY) <= 0.01f) return;
+		if (abs(mouseDeltaX) <= 0.01f || abs(mouseDeltaY) <= 0.01f) return; // avoid rotations for small delta value
 
 		View = glm::rotate(View, glm::radians((float)mouseDeltaY), glm::vec3(1, 0, 0));
 
