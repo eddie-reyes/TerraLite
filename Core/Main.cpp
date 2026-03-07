@@ -12,15 +12,6 @@ double scrollY;
 bool isMiddleButtonPressed = false;
 bool isScrollActive = false;
 
-struct ShaderProgramSource {
-	std::string VertexSource;
-	std::string FragmentSource;
-};
-
-enum class ShaderType {
-	NONE = -1, VERTEX = 0, FRAGMENT = 1
-};
-
 static inline void zoomPlane(glm::mat4& in_matrix, double yoffset) {
 	
 }
@@ -38,39 +29,6 @@ static inline void orbitAroundPlane(glm::mat4& View, glm::mat4& Model) {
 }
 
 
-static inline ShaderProgramSource ParseShader(const std::string& filepath) {
-
-	std::ifstream stream(filepath);
-
-	if (!stream.is_open()) {
-		std::cerr << "Failed to open shader file: " << filepath << '\n';
-		return {};
-	}
-
-	std::string line;
-	std::stringstream ss[2];
-	ShaderType type = ShaderType::NONE;
-
-	while (getline(stream, line)) {
-
-		if (line.find("#shader") != std::string::npos) {
-
-			if (line.find("vertex") != std::string::npos) {
-				type = ShaderType::VERTEX;
-
-			}
-			else if (line.find("fragment") != std::string::npos) {
-				type = ShaderType::FRAGMENT;
-			}
-		}
-		else {
-			ss[(int)type] << line << '\n';
-
-		}
-	}
-
-	return { ss[0].str(), ss[1].str() };
-}
 
 //static inline unsigned int CompileShader(unsigned int type, const std::string& source) {
 //

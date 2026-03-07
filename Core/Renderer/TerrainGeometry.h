@@ -2,31 +2,34 @@
 
 #include <vector>
 
-class TerrainGeometry {
+namespace Renderer
+{
 
+	class TerrainGeometry {
 
-public:
+	public:
 
-	TerrainGeometry();
-	~TerrainGeometry();
+		TerrainGeometry();
+		~TerrainGeometry();
 
-	void BuildPlane();
+		void BuildPlane();
 
-	std::vector<float>& GetVertices() { return m_vertices; }
+		std::vector<float>& GetVertices() { return m_vertices; }
 
-	std::vector<unsigned int>& GetIndices() { return m_indices; }
+		std::vector<unsigned int>& GetIndices() { return m_indices; }
 
-	size_t GetTriangleCount() const { return m_triangleCount; }
+		size_t GetTriangleCount() const { return m_triangleCount; }
 
-private:
+	private:
 
-	size_t m_Resolution = 512;
+		size_t m_Resolution = 512;
 
-	size_t m_triangleCount = 0;
+		size_t m_triangleCount = 0;
 
-	std::vector<float> m_vertices;
+		std::vector<float> m_vertices;
 
-	std::vector<unsigned int> m_indices;
+		std::vector<unsigned int> m_indices;
 
+	};
 
 };

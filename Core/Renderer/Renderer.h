@@ -5,9 +5,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "TerrainGeometry.h" 
 #include "VertexArray.h"
 #include "IndexBuffer.h"
-#include "TerrainGeometry.h"
+
+#include <memory>
 
 namespace Renderer {
 
@@ -27,22 +29,39 @@ namespace Renderer {
 
 	struct MVPMatrix
 	{
+		inline glm::mat4 Compute() const { return Projection * View * Model; }
+
 		glm::mat4 Model;
 		glm::mat4 View;
 		glm::mat4 Projection;
 
-		inline glm::mat4 Compute() const {
+	};
 
-			return Projection * View * Model;
+	struct GeometryBufferData {
+
+		GeometryBufferData(float * verticesData, size_t vertexCount, unsigned int * indicesData, size_t indexCount) {
+		
+			va.Bind();
+
+			vb.CreateBuffer(verticesData, vertexCount);
+			ib.CreateBuffer(indicesData, indexCount);
+
+			layout.Push<float>(3);
+			va.AddBuffer(vb, layout);
 
 		}
+
+		VertexArray va;
+		VertexBufferLayout layout;
+		VertexBuffer vb;
+		IndexBuffer ib;
+
 	};
 
 	class Renderer
 	{
 	public:
 
-		Renderer();
 		~Renderer();
 
 		void Init();
@@ -56,16 +75,16 @@ namespace Renderer {
 	private:
 
 		TerrainGeometry m_TerrainGeometry;
-
-		float m_distanceFromOrgin = 2.0f;
 		
-		glm::vec3 m_CameraPos = { m_distanceFromOrgin, m_distanceFromOrgin, m_distanceFromOrgin };
+		glm::vec3 m_CameraPos = { 0, 2, 2 };
 
 		uint32_t m_Shader;
 
 		MVPMatrix m_MVPMatrix;
 
 		std::vector<UniformInfo> m_Uniforms;
+
+		std::vector<std::unique_ptr<GeometryBufferData>> m_GeometryBuffers;
 		
 
 	};

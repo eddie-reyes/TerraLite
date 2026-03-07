@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
 
@@ -8,8 +9,6 @@ namespace Renderer
 
 	class VertexArray {
 
-	private:
-		unsigned int m_RendererID;
 
 	public:
 		VertexArray() { glGenVertexArrays(1, &m_RendererID); };
@@ -18,7 +17,6 @@ namespace Renderer
 
 		void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout) {
 
-			vb.Bind();
 			const auto& elements = layout.GetElements();
 			unsigned int offset = 0;
 
@@ -34,5 +32,13 @@ namespace Renderer
 
 		void Bind() const { glBindVertexArray(m_RendererID); };
 		void Unbind() const { glBindVertexArray(0); };
+
+	private:
+
+		GLuint m_RendererID;
+
+		
 	};
+
+	
 };

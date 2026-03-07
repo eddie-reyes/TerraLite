@@ -1,4 +1,4 @@
-set(SOURCES "Main.cpp" "Application.h" "Application.cpp"  "Vendor/stb_image.cpp" "Vendor/stb_image.cpp" "Renderer/Renderer.h"  "Renderer/VertexBuffer.h"  "Renderer/IndexBuffer.h" "Renderer/Renderer.cpp" "Renderer/VertexArray.h" "Renderer/TerrainGeometry.h" "Renderer/TerrainGeometry.cpp" "Renderer/VertexBufferLayout.h" "Renderer/Shader.h" "Renderer/Shader.cpp" "Utils/Constants.h")
+set(SOURCES "Main.cpp" "Application.h" "Application.cpp"  "Vendor/stb_image.cpp" "Vendor/stb_image.cpp" "Renderer/Renderer.h"  "Renderer/VertexBuffer.h"  "Renderer/IndexBuffer.h" "Renderer/Renderer.cpp" "Renderer/VertexArray.h" "Renderer/TerrainGeometry.h" "Renderer/TerrainGeometry.cpp" "Renderer/VertexBufferLayout.h" "Renderer/Shader.h" "Renderer/Shader.cpp" "Utils/Maths.h" "Renderer/GLUtils.h" "Renderer/GLUtils.cpp")
 
 # Add source to this project's executable.
 add_executable (OpenGLFun)

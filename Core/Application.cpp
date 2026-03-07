@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "Renderer/GLUtils.h"
 
 #include <assert.h>
 #include <iostream>
@@ -50,8 +51,10 @@ Application::Application(const ApplicationSpecification& specification)
 
 	std::cout << "glad v" << GLAD_VERSION_MAJOR(loadGLresult) << '.' << GLAD_VERSION_MINOR(loadGLresult) << " Initialized\n";
 
+	Renderer::Utils::InitOpenGLDebugMessageCallback();
 
 	m_Renderer.Init();
+
 
 
 }
@@ -70,7 +73,6 @@ void Application::Run()
 
 	float lastTime = GetTime();
 
-	// Main Application loop
 	while (m_Running)
 	{
 		glfwPollEvents();

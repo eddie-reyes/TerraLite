@@ -6,6 +6,6 @@ layout(location = 0) in vec4 transform;
 		
 void main()
 {
-	//multiplication order matters
+
 	gl_Position = MVP * transform;
 };
