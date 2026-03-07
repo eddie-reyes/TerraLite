@@ -94,6 +94,12 @@ void Application::Run()
 	}
 }
 
+void Application::RaiseEvent(Event& event)
+{
+	m_Renderer.OnEvent(event);
+}
+
+
 void Application::Stop()
 {
 	m_Running = false;

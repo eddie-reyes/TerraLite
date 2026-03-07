@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include "Shader.h"
 #include "../Application.h"
+#include "../Utils/Maths.h"
 
 
 namespace Renderer {
@@ -38,7 +39,29 @@ namespace Renderer {
 
 		m_GeometryBuffers.emplace_back(std::make_unique<GeometryBufferData>(vertices.data(), vertices.size(), indices.data(), indices.size()));
 
-		//glfwSetMouseButtonCallback(window, HandleMouseInput);
+		glfwSetMouseButtonCallback(window, [](GLFWwindow * window, int button, int action, int mods)
+		{
+
+				Application& app = Application::Get();
+
+				switch (action)
+				{
+					case GLFW_PRESS:
+					{
+						
+						MouseButtonPressedEvent event(button);
+						app.RaiseEvent(event);
+						break;
+					}
+					case GLFW_RELEASE:
+					{
+						MouseButtonReleasedEvent event(button);
+						app.RaiseEvent(event);
+						break;
+					}
+				}
+
+		});
 	}
 
 	void Renderer::Draw(float dt) {
@@ -47,13 +70,51 @@ namespace Renderer {
 
 		AttachUniforms();
 
-		if (m_TerrainGeometry.GetOrbitEnabled()) {
+		if (m_isOrbitEnabled) {
 
-			m_TerrainGeometry.OrbitAroundCenter(m_MVPMatrix.View, m_MVPMatrix.Model, 1.0f, 1.0f);
+			double mouseX, mouseY;
+			GLFWwindow* window = Application::Get().GetWindowHandle();
+			glfwGetCursorPos(window, &mouseX, &mouseY);
+			glm::vec2 delta = Utils::GetMouseDelta((float)mouseX, (float)mouseY);
+
+			Utils::OrbitAroundCenter(m_MVPMatrix.View, m_MVPMatrix.Model, delta.x * dt * ORBIT_SPEED, delta.y * dt * ORBIT_SPEED);
 ;		}
 
 		glDrawElements(GL_TRIANGLES, m_TerrainGeometry.GetTriangleCount() * 6, GL_UNSIGNED_INT, nullptr);
 
+	}
+
+	void Renderer::OnEvent(Event& event)
+	{
+
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<MouseButtonPressedEvent>([this](MouseButtonPressedEvent& e) { return OnMouseButtonPressed(e); });
+		dispatcher.Dispatch<MouseButtonReleasedEvent>([this](MouseButtonReleasedEvent& e) { return OnMouseButtonReleased(e); });
+
+	}
+
+	bool Renderer::OnMouseButtonPressed(MouseButtonPressedEvent& event)
+	{
+
+		if (event.GetMouseButton() == GLFW_MOUSE_BUTTON_MIDDLE) {
+			ToggleOrbit();
+			return true;
+		}
+
+		return false;
+	
+	}
+
+	bool Renderer::OnMouseButtonReleased(MouseButtonReleasedEvent& event)
+	{
+
+		if (event.GetMouseButton() == GLFW_MOUSE_BUTTON_MIDDLE) {
+			ToggleOrbit();
+			return true;
+		}
+
+		return false;
+	
 	}
 
 	void Renderer::AttachUniforms() const
@@ -62,30 +123,11 @@ namespace Renderer {
 		for (const auto& uniform : m_Uniforms) {
 			switch (uniform.Type) {
 			case UniformType::VEC4F_UNIFORM:
-				glUniform4f(uniform.Location, 1.0f, 1.0f, 0.0f, 1.0f); // Example: Set to red color
+				glUniform4f(uniform.Location, 1.0f, 1.0f, 0.0f, 1.0f); 
 				break;
 			case UniformType::MVP_UNIFORM:
 				glm::mat4 mvp = m_MVPMatrix.Compute();
 				glUniformMatrix4fv(uniform.Location, 1, GL_FALSE, &mvp[0][0]);
-				break;
-			}
-		}
-
-	}
-
-	void Renderer::HandleMouseInput(GLFWwindow* window, int button, int action, int mods)
-	{
-		switch (action)
-		{
-			case GLFW_PRESS:
-			{
-				if (button == GLFW_MOUSE_BUTTON_MIDDLE) { m_TerrainGeometry.ToggleOrbitEnabled(); }
-				break;
-			}
-			case GLFW_RELEASE:
-			{
-				if (button == GLFW_MOUSE_BUTTON_MIDDLE) { m_TerrainGeometry.ToggleOrbitEnabled(); }
-
 				break;
 			}
 		}

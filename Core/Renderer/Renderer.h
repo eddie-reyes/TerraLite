@@ -8,8 +8,12 @@
 #include "TerrainGeometry.h" 
 #include "VertexArray.h"
 #include "IndexBuffer.h"
+#include "../InputEvents.h"
+
 
 #include <memory>
+
+constexpr float ORBIT_SPEED = 0.5;
 
 namespace Renderer {
 
@@ -66,12 +70,17 @@ namespace Renderer {
 
 		void Init();
 		void Draw(float dt);
+		void OnEvent(Event& event);
+
 
 		glm::vec3 GetCameraPosition() const { return m_CameraPos; }
 
 		void AttachUniforms() const ;
 
-		void HandleMouseInput(GLFWwindow* handle, int button, int action, int mods);
+		void ToggleOrbit() { m_isOrbitEnabled = !m_isOrbitEnabled; };
+
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
+		bool OnMouseButtonReleased(MouseButtonReleasedEvent& event);
 
 
 	private:
@@ -87,6 +96,8 @@ namespace Renderer {
 		std::vector<UniformInfo> m_Uniforms;
 
 		std::vector<std::unique_ptr<GeometryBufferData>> m_GeometryBuffers;
+
+		bool m_isOrbitEnabled = false;
 		
 
 	};

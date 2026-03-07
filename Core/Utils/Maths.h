@@ -1,3 +1,4 @@
+#include <iostream>
 
 
 namespace Utils {
@@ -8,5 +9,27 @@ namespace Utils {
         float normalized = target_min + ((value - current_min) * (target_max - target_min)) / (current_max - current_min);
         return normalized;
     }
+
+	inline void OrbitAroundCenter(glm::mat4& View, glm::mat4& Model, float mouseDeltaX, float mouseDeltaY)
+	{
+
+		if (abs(mouseDeltaX) <= 0.01f || abs(mouseDeltaY) <= 0.01f) return;
+
+		View = glm::rotate(View, glm::radians((float)mouseDeltaY), glm::vec3(1, 0, 0));
+
+		glm::vec3 rotationMatrix = glm::normalize(glm::vec3(Model * glm::vec4(0, 0, 1, 0)));
+		glm::vec3 normal = glm::cross(rotationMatrix, glm::vec3(1, 0, 0));
+		Model = glm::rotate(Model, glm::radians((float)-mouseDeltaX), normal);
+
+	}
+
+	inline glm::vec2 GetMouseDelta(float mouseX, float mouseY) {
+
+		static float lastMouseX = mouseX;
+		static float lastMouseY = mouseY;
+		float deltaX = mouseX - lastMouseX;
+		float deltaY = mouseY - lastMouseY;
+		return glm::vec2(deltaX, deltaY);
+	}
 
 }

@@ -3,6 +3,7 @@
 #include <string>
 
 #include "Renderer/Renderer.h"
+#include "Event.h"
 
 
 
@@ -22,6 +23,8 @@ public:
 
 	void Run();
 	void Stop();
+	void RaiseEvent(Event& event);
+
 
 	static Application& Get();
 	static float GetTime();

@@ -21,12 +21,6 @@ namespace Renderer
 
 		size_t GetTriangleCount() const { return m_triangleCount; }
 
-		void OrbitAroundCenter(glm::mat4& View, glm::mat4& Model, float mouseDeltaX, float mouseDeltaY);
-
-		void ToggleOrbitEnabled() { m_OrbitEnabled = !m_OrbitEnabled; }
-
-		bool GetOrbitEnabled() const { return m_OrbitEnabled; } 
-
 	private:
 
 		size_t m_Resolution = 512;
