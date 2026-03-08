@@ -3,9 +3,11 @@
 #include <string>
 
 #include "Renderer/Renderer.h"
+#include "UI/UIManager.h"
 #include "Event.h"
 
-
+const unsigned int MIN_WINDOW_WIDTH = 1280;
+const unsigned int MIN_WINDOW_HEIGHT = 720;
 
 struct ApplicationSpecification
 {
@@ -37,6 +39,8 @@ private:
 	ApplicationSpecification m_Specification;
 
 	Renderer::Renderer m_Renderer;
+
+	UI::UIManager m_UIManager;
 
 	GLFWwindow* m_WindowHandle;
 

@@ -3,17 +3,17 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include "TerrainGeometry.h" 
 #include "VertexArray.h"
 #include "IndexBuffer.h"
 #include "../InputEvents.h"
 
-
 #include <memory>
 
 constexpr float ORBIT_SPEED = 0.5;
+constexpr glm::vec4 BG_COLOR = { 0.0f, 0.2f, 0.4f, 1.0f };
+constexpr glm::vec4 DEFAULT_OPAQUE_COLOR = { 0.8f, 0.8f, 0.8f, 1.0f };
 
 namespace Renderer {
 

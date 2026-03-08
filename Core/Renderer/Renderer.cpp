@@ -66,7 +66,8 @@ namespace Renderer {
 
 	void Renderer::Draw(float dt) {
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClearColor(BG_COLOR.r, BG_COLOR.g, BG_COLOR.b, BG_COLOR.a);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		AttachUniforms();
 
@@ -123,7 +124,7 @@ namespace Renderer {
 		for (const auto& uniform : m_Uniforms) {
 			switch (uniform.Type) {
 			case UniformType::VEC4F_UNIFORM:
-				glUniform4f(uniform.Location, 1.0f, 1.0f, 0.0f, 1.0f); 
+				glUniform4f(uniform.Location, DEFAULT_OPAQUE_COLOR.r, DEFAULT_OPAQUE_COLOR.g, DEFAULT_OPAQUE_COLOR.b, DEFAULT_OPAQUE_COLOR.a); 
 				break;
 			case UniformType::MVP_UNIFORM:
 				glm::mat4 mvp = m_MVPMatrix.Compute();

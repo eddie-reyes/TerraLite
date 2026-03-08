@@ -14,6 +14,10 @@ namespace Renderer {
 
 	TerrainGeometry::~TerrainGeometry()
 	{
+
+		m_vertices.clear();
+		m_indices.clear();
+
 	}
 
 	void TerrainGeometry::BuildPlane()

@@ -5,7 +5,6 @@
 #include <iostream>
 
 
-
 static Application* s_Application = nullptr;
 
 static void GLFWErrorCallback(int error, const char* description)
@@ -30,6 +29,7 @@ Application::Application(const ApplicationSpecification& specification)
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
 	GLFWwindow* handle = glfwCreateWindow(specification.WindowWidth, specification.WindowHeight, specification.Name.c_str(), nullptr, nullptr);
+	glfwSetWindowSizeLimits(handle, MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
 	if (handle == GL_FALSE)
 	{
@@ -55,7 +55,7 @@ Application::Application(const ApplicationSpecification& specification)
 
 	m_Renderer.Init();
 
-
+	m_UIManager.Init();
 
 }
 
@@ -63,8 +63,8 @@ Application::~Application()
 {
 
 	glfwTerminate();
-
 	s_Application = nullptr;
+
 }
 
 void Application::Run()
@@ -88,6 +88,7 @@ void Application::Run()
 		lastTime = currentTime;
 
 		m_Renderer.Draw(dt);
+		m_UIManager.Draw(dt);
 
 		glfwSwapBuffers(m_WindowHandle);
 

@@ -3,7 +3,7 @@
 #include <string>
 #include <functional>
 
-
+//Thank you The Cherno!!!
 enum class EventType
 {
 	None = 0,
