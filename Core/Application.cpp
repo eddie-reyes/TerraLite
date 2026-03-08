@@ -97,7 +97,10 @@ void Application::Run()
 
 void Application::RaiseEvent(Event& event)
 {
+
+	if (m_UIManager.isUIHovered()) return;
 	m_Renderer.OnEvent(event);
+	
 }
 
 

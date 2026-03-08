@@ -17,8 +17,6 @@ namespace UI {
 
 		ImGuiWindowFlags m_windowFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-		float m_sidebarWidth = 300.0f;
-
 	};
 
 

@@ -33,7 +33,8 @@ namespace Renderer {
 				m_vertices.push_back(normalizedX);
 				m_vertices.push_back(normalizedY);
 				
-				m_vertices.push_back(Utils::PerlinNoise2D(normalizedX, normalizedY));
+				m_vertices.push_back(Utils::PerlinNoise2D(normalizedX, normalizedY) * 0.1);
+				//m_vertices.push_back(0.0f);
 
 				//dont build tris for edge vertices
 				if (j < m_Resolution - 1 && i < m_Resolution - 1) {

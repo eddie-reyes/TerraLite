@@ -8,12 +8,14 @@
 #include "VertexArray.h"
 #include "IndexBuffer.h"
 #include "../InputEvents.h"
+#include "../WindowEvents.h"
 
 #include <memory>
 
-constexpr float ORBIT_SPEED = 0.5;
+constexpr float ORBIT_SPEED = 0.3;
 constexpr glm::vec4 BG_COLOR = { 0.0f, 0.2f, 0.4f, 1.0f };
 constexpr glm::vec4 DEFAULT_OPAQUE_COLOR = { 0.8f, 0.8f, 0.8f, 1.0f };
+constexpr glm::vec2 FOV_RANGE = { 15.0f, 70.0f };
 
 namespace Renderer {
 
@@ -72,6 +74,7 @@ namespace Renderer {
 		void Draw(float dt);
 		void OnEvent(Event& event);
 
+		void SetScene(GLFWwindow* handle);
 
 		glm::vec3 GetCameraPosition() const { return m_CameraPos; }
 
@@ -81,6 +84,8 @@ namespace Renderer {
 
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
 		bool OnMouseButtonReleased(MouseButtonReleasedEvent& event);
+		bool OnWindowResize(WindowResizeEvent& event);
+		bool OnMouseScrolled(MouseScrolledEvent& event);
 
 
 	private:
@@ -98,6 +103,8 @@ namespace Renderer {
 		std::vector<std::unique_ptr<GeometryBufferData>> m_GeometryBuffers;
 
 		bool m_isOrbitEnabled = false;
+
+		float m_FOV = 70.0f;
 		
 
 	};

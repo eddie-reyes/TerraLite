@@ -18,11 +18,15 @@ namespace UI {
 		void Init();
 		void Draw(float dt);
 
+		bool isUIHovered() const { return *m_UIHovered; };
+
 	private:
 
 		UISidebar m_Sidebar;
 
 		UIMenuBar m_MenuBar;
+
+		bool * m_UIHovered;
 
 	};
 

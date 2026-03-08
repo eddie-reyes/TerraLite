@@ -1,4 +1,5 @@
 #include "UIManager.h"
+#include <iostream>
 
 #include "../Application.h"
 
@@ -9,16 +10,15 @@ namespace UI {
 
 		GLFWwindow* window = Application::Get().GetWindowHandle();
 
-		 //Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; 
 		io.FontGlobalScale = 1.5f;
-		 //Setup Platform/Renderer backends
 		ImGui_ImplGlfw_InitForOpenGL(window, true);           
 		ImGui_ImplOpenGL3_Init();
 
+		m_UIHovered = &io.WantCaptureMouse;
 
 	}
 

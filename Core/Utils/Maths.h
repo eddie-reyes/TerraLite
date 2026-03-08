@@ -3,6 +3,8 @@
 
 namespace Utils {
 
+	inline float SIDEBAR_OFFSET = 300.0f; 
+
     inline float normalize_value(float value, float current_min, float current_max, float target_min, float target_max) {
         if (current_max == current_min) return target_min; // Avoid division by zero
 
@@ -12,7 +14,6 @@ namespace Utils {
 
 	inline void OrbitAroundCenter(glm::mat4& View, glm::mat4& Model, float mouseDeltaX, float mouseDeltaY)
 	{
-
 		if (abs(mouseDeltaX) <= 0.01f || abs(mouseDeltaY) <= 0.01f) return; // avoid rotations for small delta value
 
 		View = glm::rotate(View, glm::radians((float)mouseDeltaY), glm::vec3(1, 0, 0));

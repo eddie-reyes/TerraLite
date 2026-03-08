@@ -2,6 +2,7 @@
 #include "Shader.h"
 #include "../Application.h"
 #include "../Utils/Maths.h"
+#include "../Utils/Globals.h"
 
 
 namespace Renderer {
@@ -12,22 +13,9 @@ namespace Renderer {
 		m_Shader = CreateGraphicsShader("Renderer/Shaders/transform.vert.glsl", "Renderer/Shaders/texture.frag.glsl");
 		glUseProgram(m_Shader);
 
-		int width, height;
 		GLFWwindow* window = Application::Get().GetWindowHandle();
-		glfwGetFramebufferSize(window, &width, &height);
 
-		m_MVPMatrix.Projection = glm::perspective(glm::radians(75.0f), (float)width / (float)height, 0.1f, 100.0f);
-
-		m_MVPMatrix.View = glm::lookAt(
-			m_CameraPos,
-			glm::vec3(0, 0, 0),
-			glm::vec3(0, 1, 0)
-		);
-
-		//initial transformation for the plane
-		m_MVPMatrix.Model = glm::mat4(1.0f);
-		m_MVPMatrix.Model = glm::rotate(m_MVPMatrix.Model, glm::radians(90.0f), glm::vec3(1, 0, 0));
-		m_MVPMatrix.Model = glm::rotate(m_MVPMatrix.Model, glm::radians(45.0f), glm::vec3(0, 0, 1));
+		SetScene(window);
 
 		m_Uniforms.push_back(UniformInfo{ "u_Color", glGetUniformLocation(m_Shader, "u_Color"), UniformType::VEC4F_UNIFORM });
 		m_Uniforms.push_back(UniformInfo{ "MVP", glGetUniformLocation(m_Shader, "MVP"), UniformType::MVP_UNIFORM });
@@ -62,6 +50,48 @@ namespace Renderer {
 			}
 
 		});
+
+		glfwSetWindowSizeCallback(window, [](GLFWwindow* handle, int width, int height)
+		{
+			Application& app = Application::Get();
+
+			WindowResizeEvent event((uint32_t)width, (uint32_t)height);
+			app.RaiseEvent(event);
+		});
+
+		glfwSetScrollCallback(window, [](GLFWwindow* handle, double xOffset, double yOffset)
+		{
+			Application& app = Application::Get();
+
+			MouseScrolledEvent event(xOffset, yOffset);
+			app.RaiseEvent(event);
+		});
+	}
+
+	void Renderer::SetScene(GLFWwindow* handle)
+	{
+
+		int width, height;
+		glfwGetWindowSize(handle, &width, &height);
+
+		glViewport(0, 0, width - Globals::SIDBAR_OFFSET, height);
+
+		float aspectRatio = (float)width / (float)height;
+
+		m_MVPMatrix.Projection = glm::perspective(glm::radians(m_FOV), aspectRatio, 0.1f, 100.0f);
+		
+
+		m_MVPMatrix.View = glm::lookAt(
+			m_CameraPos,
+			glm::vec3(0, 0, 0),
+			glm::vec3(0, 1, 0)
+		);
+
+		//initial transformation for the plane
+		m_MVPMatrix.Model = glm::mat4(1.0f);
+		m_MVPMatrix.Model = glm::rotate(m_MVPMatrix.Model, glm::radians(90.0f), glm::vec3(1, 0, 0));
+		m_MVPMatrix.Model = glm::rotate(m_MVPMatrix.Model, glm::radians(45.0f), glm::vec3(0, 0, 1));
+
 	}
 
 	void Renderer::Draw(float dt) {
@@ -91,6 +121,8 @@ namespace Renderer {
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<MouseButtonPressedEvent>([this](MouseButtonPressedEvent& e) { return OnMouseButtonPressed(e); });
 		dispatcher.Dispatch<MouseButtonReleasedEvent>([this](MouseButtonReleasedEvent& e) { return OnMouseButtonReleased(e); });
+		dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& e) { return OnWindowResize(e); });
+		dispatcher.Dispatch<MouseScrolledEvent>([this](MouseScrolledEvent& e) { return OnMouseScrolled(e); });
 
 	}
 
@@ -116,6 +148,26 @@ namespace Renderer {
 
 		return false;
 	
+	}
+
+	bool Renderer::OnWindowResize(WindowResizeEvent& event)
+	{
+		
+		glViewport(0, 0, event.GetWidth() - Globals::SIDBAR_OFFSET, event.GetHeight());
+
+		return true;
+	}
+
+	bool Renderer::OnMouseScrolled(MouseScrolledEvent& event)
+	{
+
+		int width, height;
+		int zoomDir = event.GetYOffset();
+		glfwGetFramebufferSize(Application::Get().GetWindowHandle(), &width, &height);
+		m_MVPMatrix.Projection = glm::perspective(glm::radians(m_FOV -= zoomDir), (float)width/height, 0.1f, 100.0f);
+		m_FOV = glm::clamp(m_FOV, FOV_RANGE.x, FOV_RANGE.y);
+
+		return true;
 	}
 
 	void Renderer::AttachUniforms() const
