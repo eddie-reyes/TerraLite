@@ -60,7 +60,7 @@ namespace Renderer {
 		m_normals.clear();
 		m_normals.reserve(m_Resolution * 2 * 3);
 
-		float sideLength = 2.0f / m_Resolution;
+		float sideLength = 4.0f / m_Resolution;
 
 		//central differencing solver
 		//1. Get indices of neighboring vertices (left, right, up, down)

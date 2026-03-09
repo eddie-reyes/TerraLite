@@ -35,7 +35,7 @@ namespace Renderer
 
 		bool m_OrbitEnabled = false;
 
-		float m_ZScale = 0.1;
+		float m_ZScale = 0.5;
 
 	};
 
