@@ -19,6 +19,7 @@ namespace Utils {
 
 		glm::vec3 rotationMatrix = glm::normalize(glm::vec3(Model * glm::vec4(0, 0, 1, 0)));
 		glm::vec3 normal = glm::cross(rotationMatrix, glm::vec3(1, 0, 0));
+
 		Model = glm::rotate(Model, glm::radians((float)-mouseDeltaX), normal);
 
 	}

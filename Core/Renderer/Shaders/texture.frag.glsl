@@ -9,12 +9,23 @@ uniform vec4 u_MaterialColor;
 
 void main()
 {
-    vec3 norm = normalize( Normal_cameraspace );
-    vec3 lightDir = normalize( LightDirection_cameraspace );
+    vec3 N = normalize(Normal_cameraspace);
+    vec3 L = normalize(LightDirection_cameraspace);
 
-    float diffuse = clamp(dot(norm, lightDir), 0, 1);
-    float ambient = 0.2;
+    float ndotl = max(dot(N, L), 0.0);
 
-    vec3 result = (ambient + diffuse) * u_MaterialColor.rgb;
-    FragColor = vec4(result, u_MaterialColor.a);
+    // Darker bright faces
+    float diffuse = pow(ndotl, 1.8);
+
+    // Keep shadows visible
+    float ambient = 0.38;
+
+    // Slight slope lift so angled terrain still reads well
+    float slopeBoost = (1.0 - ndotl) * 0.06;
+
+    float lighting = ambient + diffuse * 0.45 + slopeBoost;
+    lighting = clamp(lighting, 0.0, 0.9);
+
+    vec3 color = u_MaterialColor.rgb * lighting;
+    FragColor = vec4(color, u_MaterialColor.a);
 }

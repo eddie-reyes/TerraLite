@@ -136,7 +136,7 @@ namespace Renderer {
 	bool Renderer::OnMouseButtonPressed(MouseButtonPressedEvent& event)
 	{
 
-		if (event.GetMouseButton() == GLFW_MOUSE_BUTTON_MIDDLE) {
+		if (event.GetMouseButton() == GLFW_MOUSE_BUTTON_MIDDLE || event.GetMouseButton() == GLFW_MOUSE_BUTTON_LEFT) {
 			
 			ToggleOrbit();
 			return true;
@@ -149,7 +149,7 @@ namespace Renderer {
 	bool Renderer::OnMouseButtonReleased(MouseButtonReleasedEvent& event)
 	{
 
-		if (event.GetMouseButton() == GLFW_MOUSE_BUTTON_MIDDLE) {
+		if (event.GetMouseButton() == GLFW_MOUSE_BUTTON_MIDDLE || event.GetMouseButton() == GLFW_MOUSE_BUTTON_LEFT) {
 			ToggleOrbit();
 			return true;
 		}
