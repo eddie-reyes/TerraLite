@@ -25,6 +25,7 @@ namespace Renderer {
 		MODEL_UNIFORM,
 		PROJECTION_UNIFORM,
 		MAT_COLOR_UNIFORM,
+		MVP_UNIFORM
 
 	};
 
@@ -48,30 +49,30 @@ namespace Renderer {
 	struct GeometryBufferData {
 
 		GeometryBufferData(float * verticesData, size_t vertexCount, float * normalData, unsigned int * indicesData, size_t indexCount) {
-		
-			layout.Push<float>(3);
 
-			va[0].Bind();
+			//only one layout (3 floats for position, 3 floats for normal) so we can reuse it for both vertex buffers
+			layout.Create<float>(3);
+			vboCount = 0;
+			va.Bind();
 
 			//vertex buffer for positions w/ indices
-			vb[0].CreateBuffer(verticesData, vertexCount);
+			vb.CreateBuffer(verticesData, vertexCount);
 			ib.CreateBuffer(indicesData, indexCount);
-			va[0].AddBuffer(layout);
 
-			va[1].Bind();
+			va.AddBuffer(vboCount, layout);
 
 			//vertex buffer for normals
-			vb[1].CreateBuffer(normalData, vertexCount);
-			va[1].AddBuffer(layout);
-
-			va[0].Bind();
+			vb.CreateBuffer(normalData, vertexCount);
+			va.AddBuffer(vboCount, layout);
 
 		}
 
-		VertexArray va[2];
+		VertexArray va;
 		VertexBufferLayout layout;
-		VertexBuffer vb[2];
+		VertexBuffer vb;
 		IndexBuffer ib;
+		unsigned int vboCount;
+
 
 	};
 
@@ -112,9 +113,10 @@ namespace Renderer {
 
 		std::vector<UniformInfo> m_Uniforms;
 
-		std::vector<std::unique_ptr<GeometryBufferData>> m_GeometryBuffers;
+		std::unique_ptr<GeometryBufferData> m_GeometryBuffer;
 
 		bool m_isOrbitEnabled = false;
+
 
 	};
 

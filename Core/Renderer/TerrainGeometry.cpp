@@ -2,8 +2,6 @@
 #include "Maths.h"
 #include "Noise.h"
 
-#include <algorithm>
-
 namespace Renderer {
 
 	TerrainGeometry::TerrainGeometry()
@@ -21,10 +19,11 @@ namespace Renderer {
 
 	}
 
-	void TerrainGeometry::BuildPlane()
+	void TerrainGeometry::BuildPlane(size_t resolution)
 	{
+		m_Resolution = resolution;
 
-		m_vertices.reserve(m_Resolution * 4 * 3);
+		m_vertices.reserve(m_Resolution * 2 * 3);
 		m_indices.reserve(m_Resolution * 6);
 
 		for (size_t i = 0; i < m_Resolution; i++) {
@@ -58,25 +57,38 @@ namespace Renderer {
 
 	void TerrainGeometry::CalculateNormals(){
 
-		m_normals.reserve(m_Resolution * 4 * 3);
+		m_normals.clear();
+		m_normals.reserve(m_Resolution * 2 * 3);
 
+		float sideLength = 2.0f / m_Resolution;
+
+		//central differencing solver
+		//1. Get indices of neighboring vertices (left, right, up, down)
+		//2. Differentiate along X and Y axis to get the normal vector components (dx, dy)
+		//3. Z component is the side length of the grid cell * current Z scale
+		//4. Normalize
 		for (size_t i = 0 ; i < m_Resolution; i++) {
 			for (size_t j = 0; j < m_Resolution; j++) {
 
 				size_t index = (i * m_Resolution + j) * 3;
-				
-				float leftHeight = (j <= 0) ? 0 : m_vertices[index - 1];
-				float rightHeight = (j >= m_Resolution - 1) ? 0 : m_vertices[index + 3 + 2];
-				float downHeight = (i >= m_Resolution - 1) ? 0 : m_vertices[index + m_Resolution * 3 + 2];
-				float upHeight = (i <= 0) ? 0 : m_vertices[index - m_Resolution * 3 + 2];
 
-				glm::vec3 normal = glm::vec3(leftHeight - rightHeight, downHeight - upHeight, m_ZScale);
-				glm::normalize(normal);
+				float centerHeight = m_vertices[index + 2];
+
+				float leftHeight = (j > 0) ? m_vertices[index - 1] : centerHeight;
+				float rightHeight = (j < m_Resolution - 1) ? m_vertices[index + 3 + 2] : centerHeight;
+				float upHeight = (i > 0) ? m_vertices[index - m_Resolution * 3 + 2] : centerHeight;
+				float downHeight = (i < m_Resolution - 1) ? m_vertices[index + m_Resolution * 3 + 2] : centerHeight;
+
+				float dx = rightHeight - leftHeight;
+				float dy = downHeight - upHeight;
+
+				// For terrain where Z is up:
+				glm::vec3 normal(dx, dy, sideLength * m_ZScale);
+				normal = glm::normalize(normal);
 
 				m_normals.push_back(normal.x);
 				m_normals.push_back(normal.y);
 				m_normals.push_back(normal.z);
-
 
 			}
 

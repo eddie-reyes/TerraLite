@@ -1,7 +1,7 @@
 #version 460 core
 
 layout(location = 0) in vec3 aPos;
-layout(location = 1) out vec3 aNormal;
+layout(location = 1) in vec3 aNormal;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -12,12 +12,13 @@ out vec3 Normal;
 		
 void main()
 {
-
+ 
     vec4 worldPos = model * vec4(aPos, 1.0);
     FragPos = worldPos.xyz;
 
-    // Transform normal correctly into world space
-    Normal = mat3(transpose(inverse(model))) * aNormal;
+    mat3 normalMatrix = transpose(inverse(mat3(model)));
+    Normal = normalize(normalMatrix * aNormal);
+
 
     gl_Position = projection * view * worldPos;
 

@@ -31,6 +31,7 @@ public:
 	static Application& Get();
 	static float GetTime();
 	GLFWwindow*  GetWindowHandle() { return m_WindowHandle; }
+	ApplicationSpecification& GetSpecification() { return m_Specification; }
 
 private:
 

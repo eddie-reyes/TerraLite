@@ -17,8 +17,6 @@ namespace UI {
 
 		ImGuiWindowFlags m_windowFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 
-		float m_menubarHeight = 20.0f;
-
 	};
 
 

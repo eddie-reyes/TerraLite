@@ -24,14 +24,14 @@ namespace Renderer {
 		m_Uniforms.push_back(UniformInfo{ "model", glGetUniformLocation(m_Shader, "model"), UniformType::MODEL_UNIFORM });
 		m_Uniforms.push_back(UniformInfo{ "projection", glGetUniformLocation(m_Shader, "projection"), UniformType::PROJECTION_UNIFORM });
 
-		m_TerrainGeometry.BuildPlane();
+		m_TerrainGeometry.BuildPlane(Application::Get().GetSpecification().HeightMapResolution);
 		m_TerrainGeometry.CalculateNormals();
 	
 		std::vector<float>& vertices = m_TerrainGeometry.GetVertices();
 		std::vector<float>& normals = m_TerrainGeometry.GetNormals();
 		std::vector<unsigned int>& indices = m_TerrainGeometry.GetIndices();
 
-		m_GeometryBuffers.emplace_back(std::make_unique<GeometryBufferData>(vertices.data(), vertices.size(), normals.data(), indices.data(), indices.size()));
+		m_GeometryBuffer = std::make_unique<GeometryBufferData>(vertices.data(), vertices.size(), normals.data(), indices.data(), indices.size());
 
 		glfwSetMouseButtonCallback(window, [](GLFWwindow * window, int button, int action, int mods)
 		{
@@ -73,7 +73,6 @@ namespace Renderer {
 			app.RaiseEvent(event);
 		});
 
-
 	}
 
 	void Renderer::SetScene(GLFWwindow* handle)
@@ -110,7 +109,6 @@ namespace Renderer {
 		AttachUniforms();
 
 		if (m_isOrbitEnabled) {
-
 			double mouseX, mouseY;
 			GLFWwindow* window = Application::Get().GetWindowHandle();
 			glfwGetCursorPos(window, &mouseX, &mouseY);
@@ -118,7 +116,9 @@ namespace Renderer {
 			Utils::OrbitAroundCenter(m_MVPMatrix.View, m_MVPMatrix.Model, delta.x * dt * ORBIT_SPEED, delta.y * dt * ORBIT_SPEED);
 ;		}
 
+
 		glDrawElements(GL_TRIANGLES, m_TerrainGeometry.GetTriangleCount() * 6, GL_UNSIGNED_INT, nullptr);
+
 
 	}
 
@@ -136,7 +136,7 @@ namespace Renderer {
 	bool Renderer::OnMouseButtonPressed(MouseButtonPressedEvent& event)
 	{
 
-		if (event.GetMouseButton() == GLFW_MOUSE_BUTTON_MIDDLE || event.GetMouseButton() == GLFW_MOUSE_BUTTON_LEFT) {
+		if (event.GetMouseButton() == GLFW_MOUSE_BUTTON_MIDDLE) {
 			
 			ToggleOrbit();
 			return true;
@@ -149,7 +149,7 @@ namespace Renderer {
 	bool Renderer::OnMouseButtonReleased(MouseButtonReleasedEvent& event)
 	{
 
-		if (event.GetMouseButton() == GLFW_MOUSE_BUTTON_MIDDLE || event.GetMouseButton() == GLFW_MOUSE_BUTTON_LEFT) {
+		if (event.GetMouseButton() == GLFW_MOUSE_BUTTON_MIDDLE) {
 			ToggleOrbit();
 			return true;
 		}
