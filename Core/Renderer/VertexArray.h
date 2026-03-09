@@ -7,26 +7,29 @@
 namespace Renderer
 {
 
-	class VertexArray {
+	static int VAO_COUNT = 0;
 
+	class VertexArray {
 
 	public:
 		VertexArray() { glGenVertexArrays(1, &m_RendererID); };
 
 		~VertexArray() { glDeleteVertexArrays(1, &m_RendererID); };
 
-		void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout) {
+		void AddBuffer(const VertexBufferLayout& layout) {
 
 			const auto& elements = layout.GetElements();
 			unsigned int offset = 0;
 
 			for (size_t i = 0; i < elements.size(); i++) {
 				const auto& element = elements[i];
-				glEnableVertexAttribArray(i);
-				glVertexAttribPointer(i, element.count, element.type, element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (const void*)offset);
+				glEnableVertexAttribArray(VAO_COUNT);
+				glVertexAttribPointer(VAO_COUNT, element.count, element.type, element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (const void*)offset);
 				offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
 
 			}
+
+			VAO_COUNT++;
 
 		}
 

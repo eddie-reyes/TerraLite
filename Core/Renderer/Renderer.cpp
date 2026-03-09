@@ -12,20 +12,26 @@ namespace Renderer {
 	{
 		m_Shader = CreateGraphicsShader("Renderer/Shaders/transform.vert.glsl", "Renderer/Shaders/texture.frag.glsl");
 		glUseProgram(m_Shader);
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
 
 		GLFWwindow* window = Application::Get().GetWindowHandle();
 
 		SetScene(window);
 
-		m_Uniforms.push_back(UniformInfo{ "u_Color", glGetUniformLocation(m_Shader, "u_Color"), UniformType::VEC4F_UNIFORM });
-		m_Uniforms.push_back(UniformInfo{ "MVP", glGetUniformLocation(m_Shader, "MVP"), UniformType::MVP_UNIFORM });
+		m_Uniforms.push_back(UniformInfo{ "u_MaterialColor", glGetUniformLocation(m_Shader, "u_MaterialColor"), UniformType::MAT_COLOR_UNIFORM });
+		m_Uniforms.push_back(UniformInfo{ "view", glGetUniformLocation(m_Shader, "view"), UniformType::VIEW_UNIFORM });
+		m_Uniforms.push_back(UniformInfo{ "model", glGetUniformLocation(m_Shader, "model"), UniformType::MODEL_UNIFORM });
+		m_Uniforms.push_back(UniformInfo{ "projection", glGetUniformLocation(m_Shader, "projection"), UniformType::PROJECTION_UNIFORM });
 
 		m_TerrainGeometry.BuildPlane();
+		m_TerrainGeometry.CalculateNormals();
 	
 		std::vector<float>& vertices = m_TerrainGeometry.GetVertices();
+		std::vector<float>& normals = m_TerrainGeometry.GetNormals();
 		std::vector<unsigned int>& indices = m_TerrainGeometry.GetIndices();
 
-		m_GeometryBuffers.emplace_back(std::make_unique<GeometryBufferData>(vertices.data(), vertices.size(), indices.data(), indices.size()));
+		m_GeometryBuffers.emplace_back(std::make_unique<GeometryBufferData>(vertices.data(), vertices.size(), normals.data(), indices.data(), indices.size()));
 
 		glfwSetMouseButtonCallback(window, [](GLFWwindow * window, int button, int action, int mods)
 		{
@@ -66,6 +72,8 @@ namespace Renderer {
 			MouseScrolledEvent event(xOffset, yOffset);
 			app.RaiseEvent(event);
 		});
+
+
 	}
 
 	void Renderer::SetScene(GLFWwindow* handle)
@@ -106,8 +114,7 @@ namespace Renderer {
 			double mouseX, mouseY;
 			GLFWwindow* window = Application::Get().GetWindowHandle();
 			glfwGetCursorPos(window, &mouseX, &mouseY);
-			glm::vec2 delta = Utils::GetMouseDelta((float)mouseX, (float)mouseY);
-
+			glm::vec2 delta = Utils::GetMouseDelta(mouseX, mouseY);
 			Utils::OrbitAroundCenter(m_MVPMatrix.View, m_MVPMatrix.Model, delta.x * dt * ORBIT_SPEED, delta.y * dt * ORBIT_SPEED);
 ;		}
 
@@ -130,6 +137,7 @@ namespace Renderer {
 	{
 
 		if (event.GetMouseButton() == GLFW_MOUSE_BUTTON_MIDDLE || event.GetMouseButton() == GLFW_MOUSE_BUTTON_LEFT) {
+			
 			ToggleOrbit();
 			return true;
 		}
@@ -175,12 +183,17 @@ namespace Renderer {
 
 		for (const auto& uniform : m_Uniforms) {
 			switch (uniform.Type) {
-			case UniformType::VEC4F_UNIFORM:
+			case UniformType::MAT_COLOR_UNIFORM:
 				glUniform4f(uniform.Location, DEFAULT_OPAQUE_COLOR.r, DEFAULT_OPAQUE_COLOR.g, DEFAULT_OPAQUE_COLOR.b, DEFAULT_OPAQUE_COLOR.a); 
 				break;
-			case UniformType::MVP_UNIFORM:
-				glm::mat4 mvp = m_MVPMatrix.Compute();
-				glUniformMatrix4fv(uniform.Location, 1, GL_FALSE, &mvp[0][0]);
+			case UniformType::VIEW_UNIFORM:
+				glUniformMatrix4fv(uniform.Location, 1, GL_FALSE, &m_MVPMatrix.View[0][0]);
+				break;
+			case UniformType::MODEL_UNIFORM:
+				glUniformMatrix4fv(uniform.Location, 1, GL_FALSE, &m_MVPMatrix.Model[0][0]);
+				break;
+			case UniformType::PROJECTION_UNIFORM:
+				glUniformMatrix4fv(uniform.Location, 1, GL_FALSE, &m_MVPMatrix.Projection[0][0]);
 				break;
 			}
 		}

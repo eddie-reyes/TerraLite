@@ -3,7 +3,6 @@
 
 namespace Utils {
 
-	inline float SIDEBAR_OFFSET = 300.0f; 
 
     inline float normalize_value(float value, float current_min, float current_max, float target_min, float target_max) {
         if (current_max == current_min) return target_min; // Avoid division by zero
@@ -26,10 +25,11 @@ namespace Utils {
 
 	inline glm::vec2 GetMouseDelta(float mouseX, float mouseY) {
 
-		static float lastMouseX = mouseX;
-		static float lastMouseY = mouseY;
-		float deltaX = mouseX - lastMouseX;
-		float deltaY = mouseY - lastMouseY;
+		static float currMouseX = mouseX;
+		static float currMouseY = mouseY;
+		float deltaX = mouseX - currMouseX;
+		float deltaY = mouseY - currMouseY;
+		
 		return glm::vec2(deltaX, deltaY);
 	}
 

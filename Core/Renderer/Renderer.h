@@ -21,8 +21,10 @@ namespace Renderer {
 
 	enum class UniformType {
 
-		MVP_UNIFORM,
-		VEC4F_UNIFORM
+		VIEW_UNIFORM,
+		MODEL_UNIFORM,
+		PROJECTION_UNIFORM,
+		MAT_COLOR_UNIFORM,
 
 	};
 
@@ -45,21 +47,30 @@ namespace Renderer {
 
 	struct GeometryBufferData {
 
-		GeometryBufferData(float * verticesData, size_t vertexCount, unsigned int * indicesData, size_t indexCount) {
+		GeometryBufferData(float * verticesData, size_t vertexCount, float * normalData, unsigned int * indicesData, size_t indexCount) {
 		
-			va.Bind();
-
-			vb.CreateBuffer(verticesData, vertexCount);
-			ib.CreateBuffer(indicesData, indexCount);
-
 			layout.Push<float>(3);
-			va.AddBuffer(vb, layout);
+
+			va[0].Bind();
+
+			//vertex buffer for positions w/ indices
+			vb[0].CreateBuffer(verticesData, vertexCount);
+			ib.CreateBuffer(indicesData, indexCount);
+			va[0].AddBuffer(layout);
+
+			va[1].Bind();
+
+			//vertex buffer for normals
+			vb[1].CreateBuffer(normalData, vertexCount);
+			va[1].AddBuffer(layout);
+
+			va[0].Bind();
 
 		}
 
-		VertexArray va;
+		VertexArray va[2];
 		VertexBufferLayout layout;
-		VertexBuffer vb;
+		VertexBuffer vb[2];
 		IndexBuffer ib;
 
 	};
@@ -93,6 +104,7 @@ namespace Renderer {
 		TerrainGeometry m_TerrainGeometry;
 		
 		glm::vec3 m_CameraPos = { 0, 2, 2 };
+		float m_FOV = FOV_RANGE.y;
 
 		uint32_t m_Shader;
 
@@ -103,9 +115,6 @@ namespace Renderer {
 		std::vector<std::unique_ptr<GeometryBufferData>> m_GeometryBuffers;
 
 		bool m_isOrbitEnabled = false;
-
-		float m_FOV = 70.0f;
-		
 
 	};
 
