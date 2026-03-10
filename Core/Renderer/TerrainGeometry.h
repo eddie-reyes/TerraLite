@@ -11,6 +11,7 @@ namespace Renderer
 	struct ExposedVars {
 		float ZScale;
 		float NoiseScale;
+		glm::vec2 NoiseOffset;
 		unsigned int Resolution;
 
 	};

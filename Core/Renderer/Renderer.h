@@ -50,7 +50,7 @@ namespace Renderer {
 
 		GeometryBufferData(float * verticesData, size_t vertexCount, float * normalData, unsigned int * indicesData, size_t indexCount) {
 
-			//only one layout (3 floats for position, 3 floats for normal) so we can reuse it for both vertex buffers
+			//only one layout (3 floats for position, 3 floats for normal) 
 			layout.Create<float>(3);
 			vboCount = 0;
 			va.Bind();

@@ -25,6 +25,7 @@ namespace UI {
 		ImGui::SetNextWindowPos(ImVec2((float)width - Globals::SIDBAR_OFFSET, 0.0f), ImGuiCond_Always);
 		ImGui::SetNextWindowSize(ImVec2(Globals::SIDBAR_OFFSET, height), ImGuiCond_Always);
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.15f, 0.15f, 0.15f, 1.0f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 10.0f));
 
 		auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
 		auto& renderer = Renderer::Renderer::Get();
@@ -32,16 +33,25 @@ namespace UI {
 		if (ImGui::Begin("Sidebar", nullptr, m_windowFlags))
 		{
 
-			ImGui::SliderFloat("Z Scale", &exposedVars.ZScale, 0.01f, 1.0f, "%.3f", m_sliderFlags);
-
+			
+			ImGui::Text("Z Scale");
+			ImGui::SliderFloat("##z_scale", &exposedVars.ZScale, 0.01f, 1.0f, "%.3f", m_sliderFlags);
 			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers(false);
-
-			ImGui::SliderFloat("Noise Scale", &exposedVars.NoiseScale, 0.01f, 5.0f, "%.3f", m_sliderFlags);
-
+			ImGui::Spacing();
+			ImGui::Text("Noise Scale");
+			ImGui::SliderFloat("##noise_scale", &exposedVars.NoiseScale, 0.01f, 5.0f, "%.3f", m_sliderFlags);
 			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers(false);	
-
-			const char* items[] = { "64x64", "128x128", "256x256", "512x512", "1024x1024"};
-			if (ImGui::Combo("Resolution", &m_selectedResolutionIdx, items, IM_ARRAYSIZE(items)))
+			ImGui::Spacing();
+			ImGui::Text("Noise Offset X");
+			ImGui::SliderFloat("##noise_offset_x", &exposedVars.NoiseOffset.x, -1.0f, 1.0f, "%.3f", m_sliderFlags);
+			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers(false);	
+			ImGui::Spacing();
+			ImGui::Text("Noise Offset Y");
+			ImGui::SliderFloat("##noise_offset_y", &exposedVars.NoiseOffset.y, -1.0f, 1.0f, "%.3f", m_sliderFlags);
+			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers(false);	
+			ImGui::Spacing();
+			ImGui::Text("Resolution");
+			if (ImGui::Combo("##resolution", &m_selectedResolutionIdx, Globals::SupportedResolutions, IM_ARRAYSIZE(Globals::SupportedResolutions)))
 			{
 
 				switch (m_selectedResolutionIdx) {
@@ -54,10 +64,12 @@ namespace UI {
 
 				renderer.RebuildGeometryAndUpdateBuffers(true);
 			}
+
 			
 		}
 		ImGui::End();
 		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
 
 	}
 

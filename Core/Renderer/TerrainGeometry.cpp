@@ -13,6 +13,7 @@ namespace Renderer {
 		s_TerrainGeometryVariables->ZScale = 0.5f;
 		s_TerrainGeometryVariables->NoiseScale = 1.0f;
 		s_TerrainGeometryVariables->Resolution = 256;
+		s_TerrainGeometryVariables->NoiseOffset = { 0.0, 0.0 };
 
 	}
 
@@ -65,10 +66,12 @@ namespace Renderer {
 
 		size_t currentZVertexIdx = 2;
 
+		ExposedVars& vars = GetExposedVars();
+
 		while (currentZVertexIdx < m_vertexData.vertices.size()) {
 			float x = m_vertexData.vertices[currentZVertexIdx - 2];
 			float y = m_vertexData.vertices[currentZVertexIdx - 1];
-			m_vertexData.vertices[currentZVertexIdx] = Utils::PerlinNoise2D(x * s_TerrainGeometryVariables->NoiseScale, y * s_TerrainGeometryVariables->NoiseScale) * s_TerrainGeometryVariables->ZScale;
+			m_vertexData.vertices[currentZVertexIdx] = Utils::PerlinNoise2D((x * vars.NoiseScale) + vars.NoiseOffset.x, (y * vars.NoiseScale) + vars.NoiseOffset.y) * vars.ZScale;
 			currentZVertexIdx += 3;
 		}
 

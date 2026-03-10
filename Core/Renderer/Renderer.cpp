@@ -194,14 +194,15 @@ namespace Renderer {
 			m_TerrainGeometry.BuildPlane();
 			m_TerrainGeometry.ApplyNoise();
 			m_TerrainGeometry.CalculateNormals();
+			//rebuild geometry from scratch 
 			m_GeometryBuffer = std::make_unique<GeometryBufferData>(terrainVertexData.vertices.data(), terrainVertexData.vertices.size(), terrainVertexData.normals.data(), terrainVertexData.indices.data(), terrainVertexData.indices.size());
+			return;
 			
 		}
 
 		m_TerrainGeometry.ApplyNoise();
 		m_TerrainGeometry.CalculateNormals();
-
-		if (!shouldRebuildPlane) m_GeometryBuffer->UpdateBuffers(terrainVertexData.vertices.data(), terrainVertexData.vertices.size(), terrainVertexData.normals.data());
+		m_GeometryBuffer->UpdateBuffers(terrainVertexData.vertices.data(), terrainVertexData.vertices.size(), terrainVertexData.normals.data());
 
 	}
 
