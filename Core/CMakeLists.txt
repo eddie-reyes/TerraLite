@@ -7,7 +7,7 @@ target_sources(OpenGLFun PRIVATE ${SOURCES})
 
 target_link_libraries(OpenGLFun PRIVATE glfw glad glm imgui)
 
-target_include_directories(OpenGLFun PRIVATE Utils Vendor UI)
+target_include_directories(OpenGLFun PRIVATE Utils Vendor UI Renderer Renderer/Shaders)
 
 add_custom_command(
     TARGET OpenGLFun POST_BUILD

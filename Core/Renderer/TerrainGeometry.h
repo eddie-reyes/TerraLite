@@ -1,11 +1,19 @@
 #pragma once
 
 #include <vector>
+#include <functional>
 #include <glm/gtc/matrix_transform.hpp>
 
 
 namespace Renderer
 {
+
+	struct ExposedVars {
+		float ZScale;
+		float NoiseScale;
+		unsigned int Resolution;
+
+	};
 
 	class TerrainGeometry {
 
@@ -14,7 +22,8 @@ namespace Renderer
 		TerrainGeometry();
 		~TerrainGeometry();
 
-		void BuildPlane(size_t resolution);
+		void BuildPlane();
+		void ApplyNoise();
 
 		std::vector<float>& GetVertices() { return m_vertices; }
 		std::vector<float>& GetNormals() { return m_normals; }
@@ -23,9 +32,13 @@ namespace Renderer
 
 		void CalculateNormals();
 
+		static ExposedVars& GetExposedVars();
+
+		void ClearAllBuffers();
+
 	private:
 
-		size_t m_Resolution;
+		size_t m_Resolution = 128;
 
 		size_t m_triangleCount = 0;
 
@@ -34,8 +47,6 @@ namespace Renderer
 		std::vector<unsigned int> m_indices;
 
 		bool m_OrbitEnabled = false;
-
-		float m_ZScale = 0.5;
 
 	};
 

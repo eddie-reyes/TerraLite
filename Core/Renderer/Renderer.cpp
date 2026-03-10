@@ -7,6 +7,18 @@
 
 namespace Renderer {
 
+	Renderer* s_Instance = nullptr;
+
+	Renderer::Renderer()
+	{
+		s_Instance = this;
+	}
+
+	Renderer::~Renderer()
+	{
+		glDeleteProgram(m_Shader);
+
+	}
 
 	void Renderer::Init()
 	{
@@ -24,7 +36,8 @@ namespace Renderer {
 		m_Uniforms.push_back(UniformInfo{ "model", glGetUniformLocation(m_Shader, "model"), UniformType::MODEL_UNIFORM });
 		m_Uniforms.push_back(UniformInfo{ "projection", glGetUniformLocation(m_Shader, "projection"), UniformType::PROJECTION_UNIFORM });
 
-		m_TerrainGeometry.BuildPlane(Application::Get().GetSpecification().HeightMapResolution);
+		m_TerrainGeometry.BuildPlane();
+		m_TerrainGeometry.ApplyNoise();
 		m_TerrainGeometry.CalculateNormals();
 	
 		std::vector<float>& vertices = m_TerrainGeometry.GetVertices();
@@ -80,13 +93,11 @@ namespace Renderer {
 
 		int width, height;
 		glfwGetWindowSize(handle, &width, &height);
-
 		glViewport(0, 0, width - Globals::SIDBAR_OFFSET, height);
 
 		float aspectRatio = (float)width / (float)height;
 
 		m_MVPMatrix.Projection = glm::perspective(glm::radians(m_FOV), aspectRatio, 0.1f, 100.0f);
-		
 
 		m_MVPMatrix.View = glm::lookAt(
 			m_CameraPos,
@@ -112,13 +123,11 @@ namespace Renderer {
 			double mouseX, mouseY;
 			GLFWwindow* window = Application::Get().GetWindowHandle();
 			glfwGetCursorPos(window, &mouseX, &mouseY);
-			glm::vec2 delta = Utils::GetMouseDelta(mouseX, mouseY);
+			glm::vec2 delta = Utils::GetMouseDelta(mouseX - Globals::SIDBAR_OFFSET, mouseY);
 			Utils::OrbitAroundCenter(m_MVPMatrix.View, m_MVPMatrix.Model, delta.x * dt * ORBIT_SPEED, delta.y * dt * ORBIT_SPEED);
 ;		}
 
-
 		glDrawElements(GL_TRIANGLES, m_TerrainGeometry.GetTriangleCount() * 6, GL_UNSIGNED_INT, nullptr);
-
 
 	}
 
@@ -178,6 +187,23 @@ namespace Renderer {
 		return true;
 	}
 
+	void Renderer::RebuildGeometryAndUpdateBuffers(bool shouldRebuildPlane)
+	{
+
+		if (shouldRebuildPlane) m_TerrainGeometry.BuildPlane();
+
+		std::vector<float>& vertices = m_TerrainGeometry.GetVertices();
+		std::vector<float>& normals = m_TerrainGeometry.GetNormals();
+		std::vector<unsigned int>& indices = m_TerrainGeometry.GetIndices();
+
+
+		m_TerrainGeometry.ApplyNoise();
+		m_TerrainGeometry.CalculateNormals();
+
+		m_GeometryBuffer->UpdateBuffers(vertices.data(), vertices.size(), normals.data(), indices.data(), indices.size(), shouldRebuildPlane);
+
+	}
+
 	void Renderer::AttachUniforms() const
 	{
 
@@ -200,10 +226,11 @@ namespace Renderer {
 
 	}
 
-	Renderer::~Renderer()
+	Renderer& Renderer::Get()
 	{
-		glDeleteProgram(m_Shader);
-
+		assert(s_Instance);
+		return *s_Instance;
 	}
+
 }
 

@@ -8,7 +8,7 @@ int main(void)
 	spec.WindowWidth = 1920;
 	spec.WindowHeight = 1080;
 	spec.Name = "Having Fun";
-	spec.HeightMapResolution = 128;
+	spec.HeightMapResolution = 256;
 
 	Application app(spec);
 	app.Run();

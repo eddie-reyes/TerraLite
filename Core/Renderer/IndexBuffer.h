@@ -13,15 +13,19 @@ namespace Renderer {
 			m_Count = count;
 			glGenBuffers(1, &m_RendererID);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(GLuint), data, GL_STATIC_DRAW);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(GLuint), data, GL_DYNAMIC_DRAW);
+
 
 		}
 
-		~IndexBuffer() { 
-			
-			glDeleteBuffers(1, &m_RendererID);
-		
+		void UpdateBuffer(const void* data, GLuint size) {
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+			glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size * sizeof(float), data);
+
 		}
+
+		~IndexBuffer() { glDeleteBuffers(1, &m_RendererID); }
 		void Bind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID); };
 		void Unbind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); };
 

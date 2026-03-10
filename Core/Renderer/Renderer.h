@@ -56,20 +56,30 @@ namespace Renderer {
 			va.Bind();
 
 			//vertex buffer for positions w/ indices
-			vb.CreateBuffer(verticesData, vertexCount);
+			vb[0].CreateBuffer(verticesData, vertexCount);
 			ib.CreateBuffer(indicesData, indexCount);
 
 			va.AddBuffer(vboCount, layout);
 
 			//vertex buffer for normals
-			vb.CreateBuffer(normalData, vertexCount);
+			vb[1].CreateBuffer(normalData, vertexCount);
+
 			va.AddBuffer(vboCount, layout);
+
+		}
+
+		void UpdateBuffers(float* verticesData, size_t vertexCount, float* normalData, unsigned int* indicesData, size_t indexCount, bool shouldRebuildPlane) {
+			
+			vb[0].UpdateBuffer(verticesData, vertexCount);
+			if (shouldRebuildPlane) ib.UpdateBuffer(indicesData, indexCount);
+
+			vb[1].UpdateBuffer(normalData, vertexCount);
 
 		}
 
 		VertexArray va;
 		VertexBufferLayout layout;
-		VertexBuffer vb;
+		VertexBuffer vb[2];
 		IndexBuffer ib;
 		unsigned int vboCount;
 
@@ -80,6 +90,7 @@ namespace Renderer {
 	{
 	public:
 
+		Renderer();
 		~Renderer();
 
 		void Init();
@@ -88,9 +99,9 @@ namespace Renderer {
 
 		void SetScene(GLFWwindow* handle);
 
-		glm::vec3 GetCameraPosition() const { return m_CameraPos; }
+		static Renderer& Get();
 
-		void AttachUniforms() const ;
+		void AttachUniforms() const;
 
 		void ToggleOrbit() { m_isOrbitEnabled = !m_isOrbitEnabled; };
 
@@ -99,6 +110,8 @@ namespace Renderer {
 		bool OnWindowResize(WindowResizeEvent& event);
 		bool OnMouseScrolled(MouseScrolledEvent& event);
 
+		void RebuildGeometryAndUpdateBuffers(bool shouldRebuildPlane);
+
 
 	private:
 
@@ -106,15 +119,10 @@ namespace Renderer {
 		
 		glm::vec3 m_CameraPos = { 0, 2, 2 };
 		float m_FOV = FOV_RANGE.y;
-
 		uint32_t m_Shader;
-
 		MVPMatrix m_MVPMatrix;
-
 		std::vector<UniformInfo> m_Uniforms;
-
 		std::unique_ptr<GeometryBufferData> m_GeometryBuffer;
-
 		bool m_isOrbitEnabled = false;
 
 

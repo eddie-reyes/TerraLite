@@ -13,14 +13,15 @@ namespace Utils {
 
 	inline void OrbitAroundCenter(glm::mat4& View, glm::mat4& Model, float mouseDeltaX, float mouseDeltaY)
 	{
-		if (abs(mouseDeltaX) <= 0.01f || abs(mouseDeltaY) <= 0.01f) return; // avoid rotations for small delta value
 
-		View = glm::rotate(View, glm::radians((float)mouseDeltaY), glm::vec3(1, 0, 0));
+		glm::vec3 viewMatrix = glm::normalize(glm::vec3(View * glm::vec4(0, 0, 1, 0)));
+
+		View = glm::rotate(View, glm::radians(viewMatrix.y >= 0.0 ? 0.01f : (float)mouseDeltaY), glm::vec3(1, 0, 0));
 
 		glm::vec3 rotationMatrix = glm::normalize(glm::vec3(Model * glm::vec4(0, 0, 1, 0)));
-		glm::vec3 normal = glm::cross(rotationMatrix, glm::vec3(1, 0, 0));
+		glm::vec3 normalModel = glm::cross(rotationMatrix, glm::vec3(1, 0, 0));
 
-		Model = glm::rotate(Model, glm::radians((float)-mouseDeltaX), normal);
+		Model = glm::rotate(Model, glm::radians((float)-mouseDeltaX), normalModel);
 
 	}
 

@@ -1,27 +1,33 @@
 #include "TerrainGeometry.h"
 #include "Maths.h"
 #include "Noise.h"
+#include <memory>
 
 namespace Renderer {
+
+	static std::unique_ptr<ExposedVars> s_TerrainGeometryVariables = std::make_unique<ExposedVars>();
 
 	TerrainGeometry::TerrainGeometry()
 	{
 
-		
+		s_TerrainGeometryVariables->ZScale = 0.5f;
+		s_TerrainGeometryVariables->NoiseScale = 1.0f;
+		s_TerrainGeometryVariables->Resolution = 256;
 
 	}
 
 	TerrainGeometry::~TerrainGeometry()
 	{
 
-		m_vertices.clear();
-		m_indices.clear();
+		ClearAllBuffers();
 
 	}
 
-	void TerrainGeometry::BuildPlane(size_t resolution)
+	void TerrainGeometry::BuildPlane()
 	{
-		m_Resolution = resolution;
+		m_Resolution = s_TerrainGeometryVariables->Resolution;
+
+		ClearAllBuffers();
 
 		m_vertices.reserve(m_Resolution * 2 * 3);
 		m_indices.reserve(m_Resolution * 6);
@@ -35,8 +41,7 @@ namespace Renderer {
 				m_vertices.push_back(normalizedX);
 				m_vertices.push_back(normalizedY);
 				
-				m_vertices.push_back(Utils::PerlinNoise2D(normalizedX, normalizedY) * m_ZScale);
-				//m_vertices.push_back(0.0f);
+				m_vertices.push_back(0.0f);
 
 				//dont build tris for edge vertices
 				if (j < m_Resolution - 1 && i < m_Resolution - 1) {
@@ -53,6 +58,21 @@ namespace Renderer {
 				}
 			}
 		}
+	}
+
+	void TerrainGeometry::ApplyNoise()
+	{
+
+		size_t currentZVertexIdx = 2;
+
+		while (currentZVertexIdx < m_vertices.size()) {
+			float x = m_vertices[currentZVertexIdx - 2];
+			float y = m_vertices[currentZVertexIdx - 1];
+			m_vertices[currentZVertexIdx] = Utils::PerlinNoise2D(x * s_TerrainGeometryVariables->NoiseScale, y * s_TerrainGeometryVariables->NoiseScale) * s_TerrainGeometryVariables->ZScale;
+			currentZVertexIdx += 3;
+		}
+
+
 	}
 
 	void TerrainGeometry::CalculateNormals(){
@@ -82,8 +102,7 @@ namespace Renderer {
 				float dx = rightHeight - leftHeight;
 				float dy = downHeight - upHeight;
 
-				// For terrain where Z is up:
-				glm::vec3 normal(dx, dy, sideLength * m_ZScale);
+				glm::vec3 normal(dx, dy, sideLength);
 				normal = glm::normalize(normal);
 
 				m_normals.push_back(normal.x);
@@ -94,6 +113,22 @@ namespace Renderer {
 
 		}
 
+	}
+
+
+	void TerrainGeometry::ClearAllBuffers()
+	{
+		m_vertices.clear();
+		m_indices.clear();
+		m_normals.clear();
+		m_triangleCount = 0;
+
+	}
+
+	ExposedVars& TerrainGeometry::GetExposedVars()
+	{
+		assert(s_TerrainGeometryVariables);
+		return *s_TerrainGeometryVariables;
 	}
 	
 }
