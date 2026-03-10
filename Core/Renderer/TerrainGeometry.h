@@ -15,6 +15,12 @@ namespace Renderer
 
 	};
 
+	struct GeometryVertexData {
+		std::vector<float> vertices;
+		std::vector<float> normals;
+		std::vector<unsigned int> indices;
+	};
+
 	class TerrainGeometry {
 
 	public:
@@ -25,9 +31,7 @@ namespace Renderer
 		void BuildPlane();
 		void ApplyNoise();
 
-		std::vector<float>& GetVertices() { return m_vertices; }
-		std::vector<float>& GetNormals() { return m_normals; }
-		std::vector<unsigned int>& GetIndices() { return m_indices; }
+		GeometryVertexData& GetVertexData() { return m_vertexData; }
 		size_t GetTriangleCount() const { return m_triangleCount; }
 
 		void CalculateNormals();
@@ -42,9 +46,7 @@ namespace Renderer
 
 		size_t m_triangleCount = 0;
 
-		std::vector<float> m_vertices;
-		std::vector<float> m_normals;
-		std::vector<unsigned int> m_indices;
+		GeometryVertexData m_vertexData;
 
 		bool m_OrbitEnabled = false;
 

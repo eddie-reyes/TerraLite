@@ -68,11 +68,9 @@ namespace Renderer {
 
 		}
 
-		void UpdateBuffers(float* verticesData, size_t vertexCount, float* normalData, unsigned int* indicesData, size_t indexCount, bool shouldRebuildPlane) {
+		void UpdateBuffers(float* verticesData, size_t vertexCount, float* normalData) {
 			
 			vb[0].UpdateBuffer(verticesData, vertexCount);
-			if (shouldRebuildPlane) ib.UpdateBuffer(indicesData, indexCount);
-
 			vb[1].UpdateBuffer(normalData, vertexCount);
 
 		}
@@ -116,7 +114,6 @@ namespace Renderer {
 	private:
 
 		TerrainGeometry m_TerrainGeometry;
-		
 		glm::vec3 m_CameraPos = { 0, 2, 2 };
 		float m_FOV = FOV_RANGE.y;
 		uint32_t m_Shader;

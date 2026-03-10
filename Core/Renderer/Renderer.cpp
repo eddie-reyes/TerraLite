@@ -39,12 +39,10 @@ namespace Renderer {
 		m_TerrainGeometry.BuildPlane();
 		m_TerrainGeometry.ApplyNoise();
 		m_TerrainGeometry.CalculateNormals();
-	
-		std::vector<float>& vertices = m_TerrainGeometry.GetVertices();
-		std::vector<float>& normals = m_TerrainGeometry.GetNormals();
-		std::vector<unsigned int>& indices = m_TerrainGeometry.GetIndices();
 
-		m_GeometryBuffer = std::make_unique<GeometryBufferData>(vertices.data(), vertices.size(), normals.data(), indices.data(), indices.size());
+		GeometryVertexData& terrainVertexData = m_TerrainGeometry.GetVertexData();
+
+		m_GeometryBuffer = std::make_unique<GeometryBufferData>(terrainVertexData.vertices.data(), terrainVertexData.vertices.size(), terrainVertexData.normals.data(), terrainVertexData.indices.data(), terrainVertexData.indices.size());
 
 		glfwSetMouseButtonCallback(window, [](GLFWwindow * window, int button, int action, int mods)
 		{
@@ -189,18 +187,21 @@ namespace Renderer {
 
 	void Renderer::RebuildGeometryAndUpdateBuffers(bool shouldRebuildPlane)
 	{
+		GeometryVertexData& terrainVertexData = m_TerrainGeometry.GetVertexData();
 
-		if (shouldRebuildPlane) m_TerrainGeometry.BuildPlane();
+		if (shouldRebuildPlane) {
 
-		std::vector<float>& vertices = m_TerrainGeometry.GetVertices();
-		std::vector<float>& normals = m_TerrainGeometry.GetNormals();
-		std::vector<unsigned int>& indices = m_TerrainGeometry.GetIndices();
-
+			m_TerrainGeometry.BuildPlane();
+			m_TerrainGeometry.ApplyNoise();
+			m_TerrainGeometry.CalculateNormals();
+			m_GeometryBuffer = std::make_unique<GeometryBufferData>(terrainVertexData.vertices.data(), terrainVertexData.vertices.size(), terrainVertexData.normals.data(), terrainVertexData.indices.data(), terrainVertexData.indices.size());
+			
+		}
 
 		m_TerrainGeometry.ApplyNoise();
 		m_TerrainGeometry.CalculateNormals();
 
-		m_GeometryBuffer->UpdateBuffers(vertices.data(), vertices.size(), normals.data(), indices.data(), indices.size(), shouldRebuildPlane);
+		if (!shouldRebuildPlane) m_GeometryBuffer->UpdateBuffers(terrainVertexData.vertices.data(), terrainVertexData.vertices.size(), terrainVertexData.normals.data());
 
 	}
 
