@@ -23,14 +23,14 @@ namespace Noise {
             x = (x % size + size) % size;
             y = (y % size + size) % size;
             //assuming +Z is height component
-            return data[(x * size + y) * 3 + 2];
+            return data[(y * size + x) * 3 + 2];
         }
 
         void Set(int x, int y, float val) {
 
             x = (x % size + size) % size;
             y = (y % size + size) % size;
-            data[(x * size + y) * 3 + 2] = val;
+            data[(y * size + x) * 3 + 2] = val;
         }
 
     };
@@ -265,16 +265,18 @@ namespace Noise {
 
     inline void Perturb(std::vector<float>& vertices, size_t resolution) {
 
-        HeightMap hm(resolution, vertices);
+        std::vector<float> sourceVertices = vertices;
 
-        std::vector<float> samplingPlane;
-        samplingPlane.resize(vertices.size());
+        HeightMap source(resolution, sourceVertices);
+        HeightMap dest(resolution, vertices);
 
-        //generate noise for displacement
-        std::vector<float> noiseX = GenerateSmoothedDiamondSquare(samplingPlane, resolution);
-        std::vector<float> noiseY = GenerateSmoothedDiamondSquare(samplingPlane, resolution);
+        std::vector<float> dispPlaneX(vertices.size(), 0.0f);
+        std::vector<float> dispPlaneY(vertices.size(), 0.0f);
 
-        float filteringMagnitude = 0.25;
+        std::vector<float> noiseX = GenerateSmoothedDiamondSquare(dispPlaneX, resolution);
+        std::vector<float> noiseY = GenerateSmoothedDiamondSquare(dispPlaneY, resolution);
+
+        float filteringMagnitude = 0.25f;
         float maxDisplacement = filteringMagnitude * (float)resolution;
 
         int noiseIdx = 0;
@@ -282,17 +284,14 @@ namespace Noise {
         {
             for (int x = 0; x < resolution; ++x)
             {
-                //pick direction generated from 1/f noise
                 float dx = noiseX[noiseIdx] * maxDisplacement;
                 float dy = noiseY[noiseIdx] * maxDisplacement;
 
                 float sx = (float)x + dx;
                 float sy = (float)y + dy;
 
-                //interpolate between current height map and sampled noise
-                hm.Set(x, y, BilinearInterp(hm, sx, sy));
+                dest.Set(x, y, BilinearInterp(source, sx, sy));
                 noiseIdx++;
-
             }
         }
 
