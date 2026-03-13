@@ -30,26 +30,46 @@ namespace UI {
 		auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
 		auto& renderer = Renderer::Renderer::Get();
 
-		if (ImGui::Begin("Sidebar", nullptr, m_windowFlags))
+		if (ImGui::Begin("##sidebar", nullptr, m_windowFlags))
 		{
 
-			
+			ImGui::Spacing();
+
 			ImGui::Text("Z Scale");
 			ImGui::SliderFloat("##z_scale", &exposedVars.ZScale, 0.01f, 1.0f, "%.3f", m_sliderFlags);
-			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers(false);
-			ImGui::Spacing();
+			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers();
 			ImGui::Text("Noise Scale");
-			ImGui::SliderFloat("##noise_scale", &exposedVars.NoiseScale, 0.01f, 5.0f, "%.3f", m_sliderFlags);
-			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers(false);	
-			ImGui::Spacing();
+			ImGui::SliderFloat("##noise_scale", &exposedVars.PerlinNoiseScale, 0.01f, 5.0f, "%.3f", m_sliderFlags);
+			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers();	
 			ImGui::Text("Noise Offset X");
-			ImGui::SliderFloat("##noise_offset_x", &exposedVars.NoiseOffset.x, -1.0f, 1.0f, "%.3f", m_sliderFlags);
-			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers(false);	
-			ImGui::Spacing();
+			ImGui::SliderFloat("##noise_offset_x", &exposedVars.PerlinNoiseOffset.x, -5.0f, 5.0f, "%.3f", m_sliderFlags);
+			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers();	
 			ImGui::Text("Noise Offset Y");
-			ImGui::SliderFloat("##noise_offset_y", &exposedVars.NoiseOffset.y, -1.0f, 1.0f, "%.3f", m_sliderFlags);
-			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers(false);	
+			ImGui::SliderFloat("##noise_offset_y", &exposedVars.PerlinNoiseOffset.y, -5.0f, 5.0f, "%.3f", m_sliderFlags);
+			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers();	
+
 			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+
+			ImGui::Text("Perlin Mix");
+			ImGui::SliderFloat("##perlin_mix", &exposedVars.PerlinMix, 0.0f, 1.0f, "%.3f", m_sliderFlags);
+			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers();
+			ImGui::Text("Square Diamond Mix");
+			ImGui::SliderFloat("##square_diamond_mix", &exposedVars.DiamondSquareMix, 0.0f, 1.0f, "%.3f", m_sliderFlags);
+			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers();
+			ImGui::Text("Voronoi Mix");
+			ImGui::SliderFloat("##voronoi_mix", &exposedVars.VoronoiMix, 0.0f, 1.0f, "%.3f", m_sliderFlags);
+			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers();
+
+			ImGui::Checkbox("Perturb Mix", &exposedVars.PerturbEnabled);
+			if (ImGui::IsItemClicked()) renderer.RebuildGeometryAndUpdateBuffers(true);
+
+			
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+			
 			ImGui::Text("Resolution");
 			if (ImGui::Combo("##resolution", &m_selectedResolutionIdx, Globals::SupportedResolutions, IM_ARRAYSIZE(Globals::SupportedResolutions)))
 			{
@@ -64,9 +84,8 @@ namespace UI {
 
 				renderer.RebuildGeometryAndUpdateBuffers(true);
 			}
-
-			
 		}
+
 		ImGui::End();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();

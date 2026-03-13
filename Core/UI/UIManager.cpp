@@ -14,7 +14,7 @@ namespace UI {
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; 
-		io.FontGlobalScale = 1.2f;
+		//io.FontGlobalScale = 1.5f;
 		bool GLFWresult = ImGui_ImplGlfw_InitForOpenGL(window, true);
 
 		if (!GLFWresult) {

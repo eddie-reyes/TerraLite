@@ -10,8 +10,14 @@ namespace Renderer
 
 	struct ExposedVars {
 		float ZScale;
-		float NoiseScale;
-		glm::vec2 NoiseOffset;
+		float PerlinNoiseScale;
+		glm::vec2 PerlinNoiseOffset;
+		float PerlinMix;
+		float DiamondSquareMix;
+		float VoronoiMix;
+		bool PerturbEnabled;
+
+
 		unsigned int Resolution;
 
 	};
@@ -48,8 +54,6 @@ namespace Renderer
 		size_t m_triangleCount = 0;
 
 		GeometryVertexData m_vertexData;
-
-		bool m_OrbitEnabled = false;
 
 	};
 

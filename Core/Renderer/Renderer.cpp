@@ -125,7 +125,7 @@ namespace Renderer {
 			Utils::OrbitAroundCenter(m_MVPMatrix.View, m_MVPMatrix.Model, delta.x * dt * ORBIT_SPEED, delta.y * dt * ORBIT_SPEED);
 ;		}
 
-		glDrawElements(GL_TRIANGLES, m_TerrainGeometry.GetTriangleCount() * 6, GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_TRIANGLES, m_TerrainGeometry.GetVertexData().indices.size(), GL_UNSIGNED_INT, nullptr);
 
 	}
 
@@ -144,7 +144,6 @@ namespace Renderer {
 	{
 
 		if (event.GetMouseButton() == GLFW_MOUSE_BUTTON_MIDDLE || event.GetMouseButton() == GLFW_MOUSE_BUTTON_LEFT) {
-			
 			ToggleOrbit();
 			return true;
 		}
@@ -189,20 +188,19 @@ namespace Renderer {
 	{
 		GeometryVertexData& terrainVertexData = m_TerrainGeometry.GetVertexData();
 
-		if (shouldRebuildPlane) {
-
-			m_TerrainGeometry.BuildPlane();
-			m_TerrainGeometry.ApplyNoise();
-			m_TerrainGeometry.CalculateNormals();
-			//rebuild geometry from scratch 
-			m_GeometryBuffer = std::make_unique<GeometryBufferData>(terrainVertexData.vertices.data(), terrainVertexData.vertices.size(), terrainVertexData.normals.data(), terrainVertexData.indices.data(), terrainVertexData.indices.size());
-			return;
-			
-		}
+		if (shouldRebuildPlane) m_TerrainGeometry.BuildPlane(); //rebuild plane on resolution change
 
 		m_TerrainGeometry.ApplyNoise();
 		m_TerrainGeometry.CalculateNormals();
-		m_GeometryBuffer->UpdateBuffers(terrainVertexData.vertices.data(), terrainVertexData.vertices.size(), terrainVertexData.normals.data());
+
+		if (shouldRebuildPlane) {
+			//need to rebuild geometry from scratch since buffers have changed in size
+			m_GeometryBuffer = std::make_unique<GeometryBufferData>(terrainVertexData.vertices.data(), terrainVertexData.vertices.size(), terrainVertexData.normals.data(), terrainVertexData.indices.data(), terrainVertexData.indices.size());
+		}
+		else {
+			//otherwise malloc currently assigned buffers
+			m_GeometryBuffer->UpdateBuffers(terrainVertexData.vertices.data(), terrainVertexData.vertices.size(), terrainVertexData.normals.data());
+		}
 
 	}
 

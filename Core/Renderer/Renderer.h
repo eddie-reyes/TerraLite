@@ -50,7 +50,7 @@ namespace Renderer {
 
 		GeometryBufferData(float * verticesData, size_t vertexCount, float * normalData, unsigned int * indicesData, size_t indexCount) {
 
-			//only one layout (3 floats for position, 3 floats for normal) 
+			//only one layout (3 floats for position, 3 floats for normals) 
 			layout.Create<float>(3);
 			vboCount = 0;
 			va.Bind();
@@ -81,7 +81,6 @@ namespace Renderer {
 		IndexBuffer ib;
 		unsigned int vboCount;
 
-
 	};
 
 	class Renderer
@@ -108,7 +107,7 @@ namespace Renderer {
 		bool OnWindowResize(WindowResizeEvent& event);
 		bool OnMouseScrolled(MouseScrolledEvent& event);
 
-		void RebuildGeometryAndUpdateBuffers(bool shouldRebuildPlane);
+		void RebuildGeometryAndUpdateBuffers(bool shouldRebuildPlane = false);
 
 
 	private:

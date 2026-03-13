@@ -1,15 +1,39 @@
-#include <iostream>
+#include <random>
+#include <iomanip>
 
 
 namespace Utils {
 
 
-    inline float normalize_value(float value, float current_min, float current_max, float target_min, float target_max) {
+	inline float randomFloatUniform(float min, float max) {
+
+		static std::random_device rd;
+		static std::mt19937 engine(rd());
+		std::uniform_real_distribution<float> dist(min, max);
+
+		return dist(engine);
+
+	}
+
+    inline float NormalizeValueRange(float value, float current_min, float current_max, float target_min, float target_max) {
         if (current_max == current_min) return target_min; // Avoid division by zero
 
         float normalized = target_min + ((value - current_min) * (target_max - target_min)) / (current_max - current_min);
         return normalized;
     }
+
+	inline float DistApprox(float x1, float y1, float x2, float y2)
+	{
+		float dx = x1 - x2;
+		float dy = y1 - y2;
+		return dx * dx + dy * dy;   // fast distance formula (adapted from Realtime Procedural Terrain Generation paper)
+	}
+
+	inline float Lerp(float a, float b, float t) {
+
+		return a + t * (b - a);
+
+	}
 
 	inline void OrbitAroundCenter(glm::mat4& View, glm::mat4& Model, float mouseDeltaX, float mouseDeltaY)
 	{

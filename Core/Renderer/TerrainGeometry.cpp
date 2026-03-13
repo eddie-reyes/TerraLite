@@ -10,10 +10,14 @@ namespace Renderer {
 	TerrainGeometry::TerrainGeometry()
 	{
 
-		s_TerrainGeometryVariables->ZScale = 0.5f;
-		s_TerrainGeometryVariables->NoiseScale = 1.0f;
+		s_TerrainGeometryVariables->ZScale = 0.3f;
+		s_TerrainGeometryVariables->PerlinNoiseScale = 0.0f;
 		s_TerrainGeometryVariables->Resolution = 256;
-		s_TerrainGeometryVariables->NoiseOffset = { 0.0, 0.0 };
+		s_TerrainGeometryVariables->PerlinNoiseOffset = { 0.0, 0.0 };
+		s_TerrainGeometryVariables->PerlinMix = 0.0;
+		s_TerrainGeometryVariables->DiamondSquareMix = 0.666;
+		s_TerrainGeometryVariables->VoronoiMix = 0.333;
+		s_TerrainGeometryVariables->PerturbEnabled = true;
 
 	}
 
@@ -30,14 +34,14 @@ namespace Renderer {
 
 		ClearAllBuffers();
 
-		m_vertexData.vertices.reserve(m_Resolution * 2 * 3);
-		m_vertexData.indices.reserve(m_Resolution * 6);
+		m_vertexData.vertices.reserve(m_Resolution * m_Resolution * 3);
+		m_vertexData.indices.reserve(m_Resolution * m_Resolution * 6);
 
 		for (size_t i = 0; i < m_Resolution; i++) {
 			for (size_t j = 0; j < m_Resolution; j++) {
 
-				float normalizedX = Utils::normalize_value((float)i, 0, m_Resolution, -1, 1);
-				float normalizedY = Utils::normalize_value((float)j, 0, m_Resolution, -1, 1);
+				float normalizedX = Utils::NormalizeValueRange((float)i, 0, m_Resolution, -1, 1);
+				float normalizedY = Utils::NormalizeValueRange((float)j, 0, m_Resolution, -1, 1);
 
 				m_vertexData.vertices.push_back(normalizedX);
 				m_vertexData.vertices.push_back(normalizedY);
@@ -64,32 +68,43 @@ namespace Renderer {
 	void TerrainGeometry::ApplyNoise()
 	{
 
-		size_t currentZVertexIdx = 2;
+		auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
 
-		ExposedVars& vars = GetExposedVars();
+		//Step 1. Generate 1/f noise and voronoi noise
+		std::vector<float> DiamondSquareValues = Noise::GenerateSmoothedDiamondSquare(m_vertexData.vertices, m_Resolution);
+		std::vector<float> VoronoiValues = Noise::GenerateVoronoiRidges(m_vertexData.vertices, m_Resolution);
+		//std::vector<float> PerlinValues = Noise::GeneratePerlinNoise(m_vertexData.vertices, m_Resolution);
 
-		while (currentZVertexIdx < m_vertexData.vertices.size()) {
-			float x = m_vertexData.vertices[currentZVertexIdx - 2];
-			float y = m_vertexData.vertices[currentZVertexIdx - 1];
-			m_vertexData.vertices[currentZVertexIdx] = Utils::PerlinNoise2D((x * vars.NoiseScale) + vars.NoiseOffset.x, (y * vars.NoiseScale) + vars.NoiseOffset.y) * vars.ZScale;
-			currentZVertexIdx += 3;
+		int noiseIdx = 0;
+
+		//mix noise
+		for (int zIndex = 2; zIndex < m_vertexData.vertices.size(); zIndex += 3) {
+
+			m_vertexData.vertices[zIndex] = DiamondSquareValues[noiseIdx] * exposedVars.DiamondSquareMix + VoronoiValues[noiseIdx] * exposedVars.VoronoiMix;
+			//m_vertexData.vertices[zIndex] = VoronoiValues[noiseIdx];
+			//m_vertexData.vertices[zIndex] = PerlinValues[noiseIdx];
+			noiseIdx++;
+
 		}
 
-
+		//Step 2. Apply pertubation by sampling 1/f noise. This breaks the seams caused by the voronoi noise.
+		if (exposedVars.PerturbEnabled) Noise::Perturb(m_vertexData.vertices, m_Resolution);
+		
 	}
 
 	void TerrainGeometry::CalculateNormals(){
 
 		m_vertexData.normals.clear();
-		m_vertexData.normals.reserve(m_Resolution * 2 * 3);
+		m_vertexData.normals.reserve(m_Resolution * m_Resolution * 3);
 
 		float sideLength = 4.0f / m_Resolution;
 
 		//central differencing solver
 		//1. Get indices of neighboring vertices (left, right, up, down)
 		//2. Differentiate along X and Y axis to get the normal vector components (dx, dy)
-		//3. Z component is the side length of the grid cell * current Z scale
+		//3. Z component is the side length of the grid cell
 		//4. Normalize
+
 		for (size_t i = 0 ; i < m_Resolution; i++) {
 			for (size_t j = 0; j < m_Resolution; j++) {
 
@@ -118,6 +133,7 @@ namespace Renderer {
 
 	}
 
+	
 
 	void TerrainGeometry::ClearAllBuffers()
 	{
@@ -133,6 +149,7 @@ namespace Renderer {
 		assert(s_TerrainGeometryVariables);
 		return *s_TerrainGeometryVariables;
 	}
+
 	
 }
 

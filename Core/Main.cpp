@@ -2,7 +2,6 @@
 
 int main(void)
 {
-
 	ApplicationSpecification spec;
 
 	spec.WindowWidth = 1920;
