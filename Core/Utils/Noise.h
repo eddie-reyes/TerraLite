@@ -87,9 +87,9 @@ namespace Noise {
 
         //initialize corners to random value -- NOTE: We use a uniform distribution instead of a gaussian distribution (not ideal). We opt for the former because its faster
         hm.Set(0, 0, Utils::randomFloatUniform(-1.0, 1.0));
-        hm.Set(resolution, 0, Utils::randomFloatUniform(-1.0, 1.0));
-        hm.Set(0, resolution, Utils::randomFloatUniform(-1.0, 1.0));
-        hm.Set(resolution, resolution, Utils::randomFloatUniform(-1.0, 1.0));
+        hm.Set(resolution - 1, 0, Utils::randomFloatUniform(-1.0, 1.0));
+        hm.Set(0, resolution - 1, Utils::randomFloatUniform(-1.0, 1.0));
+        hm.Set(resolution - 1, resolution - 1, Utils::randomFloatUniform(-1.0, 1.0));
 
         int step = resolution;
         float amplitude = 0.5f;    
@@ -192,7 +192,7 @@ namespace Noise {
 
                 for (const glm::vec2& p : features)
                 {
-                    float d = Utils::DistApprox((float)x, (float)y, p.x, p.y);
+                    float d = Utils::DistApprox((float)x, (float)y, p.x, p.y, resolution);
 
                     //find smallest d1 and d2 for all feature points in region
                     if (d < d1)
@@ -255,15 +255,14 @@ namespace Noise {
         float topLeft = source.At(x0, y1);
         float topRight = source.At(x1, y1);
 
-        //interoplate along x
-        float top = Utils::Lerp(topLeft, topRight, alongX);
         float bottom = Utils::Lerp(bottomLeft, bottomRight, alongX);
-
-        //interpolate along y
-        return Utils::Lerp(top, bottom, alongY);
+        float top = Utils::Lerp(topLeft, topRight, alongX);
+        return Utils::Lerp(bottom, top, alongY);
     }
 
     inline void Perturb(std::vector<float>& vertices, size_t resolution) {
+
+        auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
 
         std::vector<float> sourceVertices = vertices;
 
@@ -278,14 +277,16 @@ namespace Noise {
 
         float filteringMagnitude = 0.25f;
         float maxDisplacement = filteringMagnitude * (float)resolution;
+        float invZScale = 1 / exposedVars.ZScale;
 
         int noiseIdx = 0;
         for (int y = 0; y < resolution; ++y)
         {
             for (int x = 0; x < resolution; ++x)
             {
-                float dx = noiseX[noiseIdx] * maxDisplacement;
-                float dy = noiseY[noiseIdx] * maxDisplacement;
+
+                float dx = noiseX[noiseIdx] * invZScale * maxDisplacement;
+                float dy = noiseY[noiseIdx] * invZScale * maxDisplacement;
 
                 float sx = (float)x + dx;
                 float sy = (float)y + dy;

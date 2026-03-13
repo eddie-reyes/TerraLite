@@ -22,11 +22,16 @@ namespace Utils {
         return normalized;
     }
 
-	inline float DistApprox(float x1, float y1, float x2, float y2)
+	inline float DistApprox(float x1, float y1, float x2, float y2, size_t size)
 	{
-		float dx = x1 - x2;
-		float dy = y1 - y2;
-		return dx * dx + dy * dy;   // fast distance formula (adapted from Realtime Procedural Terrain Generation paper)
+		float dx = std::abs(x1 - x2);
+		float dy = std::abs(y1 - y2);
+
+		//choose minimum of wrapped distance vs. physical distance (Torodial distance)
+		dx = std::min(dx, size - dx);
+		dy = std::min(dy, size - dy);   
+
+		return dx * dx + dy * dy; // fast distance formula (adapted from Realtime Procedural Terrain Generation paper)
 	}
 
 	inline float Lerp(float a, float b, float t) {
