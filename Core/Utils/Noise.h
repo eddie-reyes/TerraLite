@@ -348,7 +348,7 @@ namespace Noise {
                 if (dmax > 0.0f && dmax <= talus)
                 {
                     //c = 0.5
-                    float delta = 0.25f * dmax;
+                    float delta = 0.5f * dmax;
 
                     int nx = x + dx[lowestIndex];
                     int ny = y + dy[lowestIndex];
