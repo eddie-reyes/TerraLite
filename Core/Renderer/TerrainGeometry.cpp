@@ -1,6 +1,7 @@
 #include "TerrainGeometry.h"
 #include "Maths.h"
 #include "Noise.h"
+#include "../Utils/Globals.h"
 #include <memory>
 
 namespace Renderer {
@@ -10,15 +11,8 @@ namespace Renderer {
 	TerrainGeometry::TerrainGeometry()
 	{
 
-		s_TerrainGeometryVariables->ZScale = 0.3f;
-		s_TerrainGeometryVariables->PerlinNoiseScale = 0.0f;
-		s_TerrainGeometryVariables->Resolution = 256;
-		s_TerrainGeometryVariables->PerlinNoiseOffset = { 0.0, 0.0 };
-		s_TerrainGeometryVariables->PerlinMix = 0.0;
-		s_TerrainGeometryVariables->DiamondSquareMix = 0.666;
-		s_TerrainGeometryVariables->VoronoiMix = 0.333;
-		s_TerrainGeometryVariables->PerturbEnabled = true;
-
+		s_TerrainGeometryVariables = std::make_unique<ExposedVars>(Globals::DEFAULT_NOISE_SETTINGS);
+		
 	}
 
 	TerrainGeometry::~TerrainGeometry()
@@ -73,24 +67,30 @@ namespace Renderer {
 		//Step 1. Generate 1/f noise and voronoi noise
 		std::vector<float> DiamondSquareValues = Noise::GenerateSmoothedDiamondSquare(m_vertexData.vertices, m_Resolution);
 		std::vector<float> VoronoiValues = Noise::GenerateVoronoiRidges(m_vertexData.vertices, m_Resolution);
-		//std::vector<float> PerlinValues = Noise::GeneratePerlinNoise(m_vertexData.vertices, m_Resolution);
 
 		int noiseIdx = 0;
 
 		//mix noise
 		for (int zIndex = 2; zIndex < m_vertexData.vertices.size(); zIndex += 3) {
 
-			m_vertexData.vertices[zIndex] = DiamondSquareValues[noiseIdx] * exposedVars.DiamondSquareMix + VoronoiValues[noiseIdx] * exposedVars.VoronoiMix;
-			//m_vertexData.vertices[zIndex] = VoronoiValues[noiseIdx];
-			//m_vertexData.vertices[zIndex] = PerlinValues[noiseIdx];
+			if (exposedVars.DiamondSquareEnabled) m_vertexData.vertices[zIndex] += DiamondSquareValues[noiseIdx] * exposedVars.DiamondSquareMix;
+			if (exposedVars.VoronoiEnabled) m_vertexData.vertices[zIndex] += VoronoiValues[noiseIdx] * exposedVars.VoronoiMix;
 			noiseIdx++;
 
 		}
 
-		//Step 2. Apply pertubation by sampling 1/f noise. This breaks the seams caused by the voronoi noise.
+		//Step 2. Apply pertubation by sampling 1/f noise. This breaks the seam s caused by the voronoi noise.
 		if (exposedVars.PerturbEnabled) Noise::Perturb(m_vertexData.vertices, m_Resolution);
-		
-	}
+
+		//Step 3. Apply fast erosion method using Von Neumann neighborhoods
+		if (exposedVars.ErosionEnabled) {
+
+			for (int i = 0; i < exposedVars.ErosionIterations; ++i)
+				Noise::FastErode(m_vertexData.vertices, exposedVars.ErosionTalus / m_Resolution * exposedVars.ZScale, m_Resolution);
+
+			Noise::normalizeZValues(m_vertexData.vertices);
+		}
+	} 
 
 	void TerrainGeometry::CalculateNormals(){
 

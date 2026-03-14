@@ -3,6 +3,7 @@
 #include "imgui.h"
 
 
+
 namespace UI {
 
 	class UISidebar {
@@ -13,6 +14,8 @@ namespace UI {
 		UISidebar();
 		~UISidebar();
 		void Draw();
+
+		void NewSection(const char* title, bool topSection = false);
 
 	private:
 

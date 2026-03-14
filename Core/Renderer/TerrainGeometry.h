@@ -10,15 +10,25 @@ namespace Renderer
 
 	struct ExposedVars {
 		float ZScale;
-		float PerlinNoiseScale;
-		glm::vec2 PerlinNoiseOffset;
-		float PerlinMix;
+		unsigned int Resolution;
+
+		float DiamondSquareAmplitude;
+		float DiamondSquarePersistance;
 		float DiamondSquareMix;
+		bool DiamondSquareEnabled;
+
+		int VoronoiCellsPerAxis;
+		int VoronoiFeaturePointsPerCell;
 		float VoronoiMix;
+		bool VoronoiEnabled;
+
+		float PerturbMaxDisplacement;
 		bool PerturbEnabled;
 
-
-		unsigned int Resolution;
+		int ErosionIterations;
+		float ErosionTalus;
+		float ErosionStrength;
+		bool ErosionEnabled;
 
 	};
 

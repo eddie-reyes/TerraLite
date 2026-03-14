@@ -72,6 +72,7 @@ namespace Noise {
         for (int zIndex = 2; zIndex < vertices.size(); zIndex += 3) {
 
             values.push_back(vertices[zIndex]);
+            vertices[zIndex] = 0;
 
         }
 
@@ -83,6 +84,8 @@ namespace Noise {
     //////////////////
 	inline std::vector<float> GenerateSmoothedDiamondSquare(std::vector<float>& vertices, size_t resolution) {
 
+        auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
+
         HeightMap hm(resolution, vertices);
 
         //initialize corners to random value -- NOTE: We use a uniform distribution instead of a gaussian distribution (not ideal). We opt for the former because its faster
@@ -92,8 +95,8 @@ namespace Noise {
         hm.Set(resolution - 1, resolution - 1, Utils::randomFloatUniform(-1.0, 1.0));
 
         int step = resolution;
-        float amplitude = 0.5f;    
-        float persistence = 0.5f;
+        float amplitude = exposedVars.DiamondSquareAmplitude;    
+        float persistence = exposedVars.DiamondSquarePersistance;
 
         //iterative version
         while (step >= 1)
@@ -135,7 +138,7 @@ namespace Noise {
                     float d = hm.At(x, y + half); //down
 
                     float avg = 0.25f * (a + b + c + d);
-                    float offset = Utils::randomFloatUniform(-amplitude, amplitude)* avg;
+                    float offset = Utils::randomFloatUniform(-amplitude, amplitude) * avg;
 
                     hm.Set(x, y, avg + offset);
                 }
@@ -176,11 +179,12 @@ namespace Noise {
 
     inline std::vector<float> GenerateVoronoiRidges(std::vector<float>& vertices, size_t resolution)
     {
+        auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
+
         HeightMap hm(resolution, vertices);
 
-        // can tune
-        int cellsPerAxis = 4;
-        int pointsPerCell = 1;
+        int cellsPerAxis = exposedVars.VoronoiCellsPerAxis;
+        int pointsPerCell = exposedVars.VoronoiFeaturePointsPerCell;
         std::vector<glm::vec2> features = GenerateFeaturePoints(resolution, cellsPerAxis, pointsPerCell);
 
         for (int y = 0; y < resolution; ++y)
@@ -264,18 +268,19 @@ namespace Noise {
 
         auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
 
+        //save copy of original noise to sample from
         std::vector<float> sourceVertices = vertices;
 
         HeightMap source(resolution, sourceVertices);
         HeightMap dest(resolution, vertices);
 
-        std::vector<float> dispPlaneX(vertices.size(), 0.0f);
-        std::vector<float> dispPlaneY(vertices.size(), 0.0f);
+        //noise plane
+        std::vector<float> dispPlane(vertices.size(), 0.0f);
 
-        std::vector<float> noiseX = GenerateSmoothedDiamondSquare(dispPlaneX, resolution);
-        std::vector<float> noiseY = GenerateSmoothedDiamondSquare(dispPlaneY, resolution);
+        std::vector<float> noiseX = GenerateSmoothedDiamondSquare(dispPlane, resolution);
+        std::vector<float> noiseY = GenerateSmoothedDiamondSquare(dispPlane, resolution);
 
-        float filteringMagnitude = 0.25f;
+        float filteringMagnitude = exposedVars.PerturbMaxDisplacement;
         float maxDisplacement = filteringMagnitude * (float)resolution;
         float invZScale = 1 / exposedVars.ZScale;
 
@@ -300,5 +305,62 @@ namespace Noise {
 
     }
 
+    ///////////
+    //EROSION// -- samples Von Neumann adjacencies to erode terrain
+    ///////////
+    inline void FastErode(std::vector<float>& vertices, float talus, size_t resolution)
+    {
+
+        HeightMap hm(resolution, vertices);
+
+        // rotated Von Neumann neighborhood:
+        // lower-left, lower-right, upper-left, upper-right
+        const int dx[4] = { -1, 1, -1, 1 };
+        const int dy[4] = { -1, -1, 1, 1 };
+
+        for (int y = 0; y < resolution; ++y)
+        {
+            for (int x = 0; x < resolution; ++x)
+            {
+                float h = hm.At(x, y);
+
+                float dmax = 0.0f;
+                int lowestIndex = -1;
+
+                // Find lowest neighbor through max height drop
+                for (int i = 0; i < 4; ++i)
+                {
+                    int nx = x + dx[i];
+                    int ny = y + dy[i];
+
+                    float hn = hm.At(nx, ny);
+                    float d = h - hn;
+
+                    if (d > dmax)
+                    {
+                        dmax = d;
+                        lowestIndex = i;
+                    }
+                }
+
+                // New proposed rule from paper:
+                // erode only if local drop is small enough
+                if (dmax > 0.0f && dmax <= talus)
+                {
+                    //c = 0.5
+                    float delta = 0.25f * dmax;
+
+                    int nx = x + dx[lowestIndex];
+                    int ny = y + dy[lowestIndex];
+
+                    float h = hm.At(x, y);
+                    float hn = hm.At(nx, ny);
+
+                    hm.Set(x, y, h - delta);
+                    hm.Set(nx, ny, hn + delta);
+                }
+            }
+        }
+    }
 
 }
