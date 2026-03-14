@@ -1,10 +1,14 @@
+#pragma once
+
 #include "UIMenuBar.h"
 #include "../Application.h"
+#include "../Utils/FileIO.h"
+#include <vector>
 
 
 namespace UI {
 
-
+    
 	UIMenuBar::UIMenuBar() {
 
 		
@@ -25,14 +29,15 @@ namespace UI {
 
             if (ImGui::BeginMenu("File"))
             {
+                auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
+
                 if (ImGui::MenuItem("Create")) { /* Do something */ }
                 if (ImGui::MenuItem("Open", "Ctrl+O")) { /* Do something */ } 
-                if (ImGui::MenuItem("Save", "Ctrl+S")) { /* Do something */ }
-                ImGui::EndMenu(); 
-            }
-            if (ImGui::BeginMenu("Edit"))
-            {
-                if (ImGui::MenuItem("Undo")) { /* Do something */ }
+                if (ImGui::MenuItem("Save", "Ctrl+S")) {
+                
+                    FileIO::SaveHeightMapToFile(*exposedVars.TerrainVertices, exposedVars.Resolution,  1 / exposedVars.ZScale);
+                
+                }
                 ImGui::EndMenu(); 
             }
             ImGui::EndMainMenuBar(); 

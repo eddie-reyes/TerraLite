@@ -194,7 +194,7 @@ namespace Renderer {
 		m_TerrainGeometry.CalculateNormals();
 
 		if (shouldRebuildPlane) {
-			//need to rebuild geometry from scratch since buffers have changed in size
+			//need to rebuild buffers from scratch since vertex data has changed in size
 			m_GeometryBuffer = std::make_unique<GeometryBufferData>(terrainVertexData.vertices.data(), terrainVertexData.vertices.size(), terrainVertexData.normals.data(), terrainVertexData.indices.data(), terrainVertexData.indices.size());
 		}
 		else {

@@ -1,5 +1,5 @@
 ﻿cmake_minimum_required (VERSION 3.11)
-project ("OpenGLFun")
+project ("TerraLite")
 
 set(CMAKE_CXX_STANDARD 23)
 

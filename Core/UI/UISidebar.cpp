@@ -66,9 +66,8 @@ namespace UI {
 			ImGui::Text("Mix");
 			ImGui::SliderFloat("##square_diamond_mix", &exposedVars.DiamondSquareMix, 0.0f, 1.0f, "%.3f", m_sliderFlags);
 			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers();
-			ImGui::Checkbox("Enabled##1", &exposedVars.DiamondSquareEnabled);
-			if (ImGui::IsItemClicked()) renderer.RebuildGeometryAndUpdateBuffers();
-			
+			if (ImGui::Checkbox("Enabled##1", &exposedVars.DiamondSquareEnabled)) renderer.RebuildGeometryAndUpdateBuffers();
+
 			NewSection("Voronoi");
 
 			ImGui::Text("Cells Per Axis");
@@ -80,16 +79,14 @@ namespace UI {
 			ImGui::Text("Mix");
 			ImGui::SliderFloat("##voronoi_mix", &exposedVars.VoronoiMix, 0.0f, 1.0f, "%.3f", m_sliderFlags);
 			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers();
-			ImGui::Checkbox("Enabled##2", &exposedVars.VoronoiEnabled);
-			if (ImGui::IsItemClicked()) renderer.RebuildGeometryAndUpdateBuffers();
+			if (ImGui::Checkbox("Enabled##2", &exposedVars.VoronoiEnabled)) renderer.RebuildGeometryAndUpdateBuffers();
 
 			NewSection("Perturbation");
 
 			ImGui::Text("Max Displacement");
 			ImGui::SliderFloat("##perturb_max_displacement", &exposedVars.PerturbMaxDisplacement, 0.1, 1, "%.3f", m_sliderFlags);
 			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers();
-			ImGui::Checkbox("Enabled##3", &exposedVars.PerturbEnabled);
-			if (ImGui::IsItemClicked()) renderer.RebuildGeometryAndUpdateBuffers();
+			if (ImGui::Checkbox("Enabled##3", &exposedVars.PerturbEnabled)) renderer.RebuildGeometryAndUpdateBuffers();
 
 			NewSection("Erosion");
 
@@ -102,8 +99,7 @@ namespace UI {
 			ImGui::Text("Talus (Angle of Inclination)");
 			ImGui::SliderFloat("##erosion_talus", &exposedVars.ErosionTalus, 0.0, 16.0, "%.3f", m_sliderFlags);
 			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers();
-			ImGui::Checkbox("Enabled##4", &exposedVars.ErosionEnabled);
-			if (ImGui::IsItemClicked()) renderer.RebuildGeometryAndUpdateBuffers();
+			if (ImGui::Checkbox("Enabled##4", &exposedVars.ErosionEnabled)) renderer.RebuildGeometryAndUpdateBuffers();
 			
 		}
 

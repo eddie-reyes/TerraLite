@@ -1,14 +1,13 @@
 #pragma once
 
 #include <vector>
-#include <functional>
-#include <glm/gtc/matrix_transform.hpp>
-
 
 namespace Renderer
 {
 
 	struct ExposedVars {
+
+
 		float ZScale;
 		unsigned int Resolution;
 
@@ -29,6 +28,8 @@ namespace Renderer
 		float ErosionTalus;
 		float ErosionStrength;
 		bool ErosionEnabled;
+
+		std::vector<float>* TerrainVertices;
 
 	};
 

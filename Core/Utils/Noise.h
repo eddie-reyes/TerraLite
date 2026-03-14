@@ -7,6 +7,8 @@ All noise interpolation techniques and the corresponding implementations are ins
     Author: Jacob Olsen, xenorg@imada.sdu.dk 
     Department of Mathematics And Computer Science (IMADA)
     University of Southern Denmark
+
+Citation: Olsen, Jacob. "Realtime procedural terrain generation." (2004): 31.
 */
 
 namespace Noise {
@@ -58,7 +60,7 @@ namespace Noise {
         //normalize
         for (size_t currentZVertexIdx = 2; currentZVertexIdx < vertices.size(); currentZVertexIdx += 3) {
 
-            vertices[currentZVertexIdx] = Utils::NormalizeValueRange(vertices[currentZVertexIdx], minH, maxH, -1, 1) * exposedVars.ZScale;
+            vertices[currentZVertexIdx] = Utils::NormalizeValueRange(vertices[currentZVertexIdx], minH, maxH, -0.5, 0.5) * exposedVars.ZScale;
             
         }
 
@@ -89,10 +91,10 @@ namespace Noise {
         HeightMap hm(resolution, vertices);
 
         //initialize corners to random value -- NOTE: We use a uniform distribution instead of a gaussian distribution (not ideal). We opt for the former because its faster
-        hm.Set(0, 0, Utils::randomFloatUniform(-1.0, 1.0));
-        hm.Set(resolution - 1, 0, Utils::randomFloatUniform(-1.0, 1.0));
-        hm.Set(0, resolution - 1, Utils::randomFloatUniform(-1.0, 1.0));
-        hm.Set(resolution - 1, resolution - 1, Utils::randomFloatUniform(-1.0, 1.0));
+        hm.Set(0, 0, Utils::randomFloatUniform(-0.5, 0.5));
+        hm.Set(resolution - 1, 0, Utils::randomFloatUniform(-0.5, 0.5));
+        hm.Set(0, resolution - 1, Utils::randomFloatUniform(-0.5, 0.5));
+        hm.Set(resolution - 1, resolution - 1, Utils::randomFloatUniform(-0.5, 0.5));
 
         int step = resolution;
         float amplitude = exposedVars.DiamondSquareAmplitude;    
@@ -167,8 +169,8 @@ namespace Noise {
             {
                 for (int k = 0; k < pointsPerCell; ++k)
                 {
-                    float px = (gx + Utils::randomFloatUniform(0.0, 1.0)) * regionSize;
-                    float py = (gy + Utils::randomFloatUniform(0.0, 1.0)) * regionSize;
+                    float px = (gx + Utils::randomFloatUniform(-1.0, 1.0)) * regionSize;
+                    float py = (gy + Utils::randomFloatUniform(-1.0, 1.0)) * regionSize;
                     pts.push_back({ px, py });
                 }
             }
@@ -290,8 +292,8 @@ namespace Noise {
             for (int x = 0; x < resolution; ++x)
             {
 
-                float dx = noiseX[noiseIdx] * invZScale * maxDisplacement;
-                float dy = noiseY[noiseIdx] * invZScale * maxDisplacement;
+                float dx = noiseX[noiseIdx] * maxDisplacement;
+                float dy = noiseY[noiseIdx] * maxDisplacement;
 
                 float sx = (float)x + dx;
                 float sy = (float)y + dy;
@@ -310,6 +312,8 @@ namespace Noise {
     ///////////
     inline void FastErode(std::vector<float>& vertices, float talus, size_t resolution)
     {
+
+        auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
 
         HeightMap hm(resolution, vertices);
 
@@ -343,12 +347,12 @@ namespace Noise {
                     }
                 }
 
-                // New proposed rule from paper:
+                // optimization from paper
                 // erode only if local drop is small enough
                 if (dmax > 0.0f && dmax <= talus)
                 {
                     //c = 0.5
-                    float delta = 0.5f * dmax;
+                    float delta = exposedVars.ErosionStrength * dmax;
 
                     int nx = x + dx[lowestIndex];
                     int ny = y + dy[lowestIndex];

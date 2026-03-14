@@ -23,7 +23,7 @@ namespace UI {
 
 		ImGuiSliderFlags m_sliderFlags = ImGuiSliderFlags_AlwaysClamp | ImGuiSliderFlags_NoRoundToFormat;
 
-		int m_selectedResolutionIdx = 2;
+		int m_selectedResolutionIdx = 3;
 
 	};
 

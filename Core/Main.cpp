@@ -6,7 +6,7 @@ int main(void)
 
 	spec.WindowWidth = 1920;
 	spec.WindowHeight = 1080;
-	spec.Name = "Having Fun";
+	spec.Name = "TerraLite";
 	spec.HeightMapResolution = 256;
 
 	Application app(spec);

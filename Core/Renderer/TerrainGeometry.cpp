@@ -2,7 +2,6 @@
 #include "Maths.h"
 #include "Noise.h"
 #include "../Utils/Globals.h"
-#include <memory>
 
 namespace Renderer {
 
@@ -57,6 +56,8 @@ namespace Renderer {
 				}
 			}
 		}
+
+		s_TerrainGeometryVariables->TerrainVertices = &m_vertexData.vertices;
 	}
 
 	void TerrainGeometry::ApplyNoise()

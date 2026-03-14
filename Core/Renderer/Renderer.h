@@ -97,7 +97,6 @@ namespace Renderer {
 		void SetScene(GLFWwindow* handle);
 
 		static Renderer& Get();
-
 		void AttachUniforms() const;
 
 		void ToggleOrbit() { m_isOrbitEnabled = !m_isOrbitEnabled; };
