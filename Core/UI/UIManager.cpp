@@ -27,7 +27,7 @@ namespace UI {
 			std::cerr << "Failed to initialize ImGui OpenGL backend. Cannot proceed!" << std::endl;
 		}
 
-		std::cout << "[System] ImGui v" << ImGui::GetVersion() << " Initialized" << "\n";
+		std::cout << "[INFO] ImGui v" << ImGui::GetVersion() << " Initialized" << "\n";
 
 		m_UIHovered = &io.WantCaptureMouse;
 

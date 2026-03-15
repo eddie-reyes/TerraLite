@@ -10,7 +10,7 @@
 
 namespace FileIO {
 
-	inline void SaveHeightMapToFile(std::vector<float>& vertices, size_t resolution, int ZScale) {
+	inline void SaveHeightMapToFile(std::vector<float>& vertices, size_t resolution) {
 
 		std::vector<uint8_t> heightValues(resolution);
 
@@ -22,12 +22,12 @@ namespace FileIO {
 			heightValues.push_back(grayscaleValue);
 
 		}
-		std::string outputPath = std::format("heightmap{}x{}.png", resolution, resolution);
+		std::string outputPath = std::format("heightmap_{}.png", resolution);
 
 		auto destination = pfd::save_file("Save to disk", outputPath, { "Image Files", "*.png"} ).result();
 
 		if (!destination.empty()) {
-			stbi_write_png(outputPath.c_str(), resolution, resolution, 1, heightValues.data(), resolution * sizeof(uint8_t));
+			stbi_write_png(destination.c_str(), resolution, resolution, 1, heightValues.data(), resolution * sizeof(uint8_t));
 			std::cout << "[File IO] Heightmap saved to: " << destination << "\n";
 		}
 	}

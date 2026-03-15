@@ -34,7 +34,7 @@ namespace UI {
                 if (ImGui::MenuItem("Open", "Ctrl+O")) { /* Do something */ } 
                 if (ImGui::MenuItem("Save", "Ctrl+S")) {
                 
-                    FileIO::SaveHeightMapToFile(*exposedVars.TerrainVertices, exposedVars.Resolution,  1 / exposedVars.ZScale);
+                    FileIO::SaveHeightMapToFile(*exposedVars.TerrainVertices, exposedVars.Resolution);
                 
                 }
                 ImGui::EndMenu(); 

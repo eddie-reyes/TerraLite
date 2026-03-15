@@ -1,7 +1,6 @@
 #include "UISidebar.h".
 #include "../Utils/Globals.h"
 #include "../Application.h"
-#include <numbers>
 
 namespace UI {
 

@@ -284,7 +284,6 @@ namespace Noise {
 
         float filteringMagnitude = exposedVars.PerturbMaxDisplacement;
         float maxDisplacement = filteringMagnitude * (float)resolution;
-        float invZScale = 1 / exposedVars.ZScale;
 
         int noiseIdx = 0;
         for (int y = 0; y < resolution; ++y)
