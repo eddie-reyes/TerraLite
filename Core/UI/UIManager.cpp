@@ -14,7 +14,6 @@ namespace UI {
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; 
-		//io.FontGlobalScale = 1.5f;
 		bool GLFWresult = ImGui_ImplGlfw_InitForOpenGL(window, true);
 
 		if (!GLFWresult) {
@@ -27,11 +26,13 @@ namespace UI {
 			std::cerr << "Failed to initialize ImGui OpenGL backend. Cannot proceed!" << std::endl;
 		}
 
+		std::cout << "ImGui Initialized" << "\n";
+
 		m_UIHovered = &io.WantCaptureMouse;
 
 	}
 
-	void UIManager::Draw(float dt) {
+	void UIManager::Draw() {
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -45,7 +46,7 @@ namespace UI {
 
 	}
 
-	UIManager::~UIManager() {
+	void UIManager::Shutdown() {
 
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();

@@ -13,12 +13,11 @@ namespace UI {
 	{
 	public:
 
-		~UIManager();
-
 		void Init();
-		void Draw(float dt);
+		void Draw();
 
 		bool isUIHovered() const { return *m_UIHovered; };
+		void Shutdown();
 
 	private:
 

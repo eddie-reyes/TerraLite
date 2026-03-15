@@ -44,7 +44,7 @@ namespace Noise {
         float minH = vertices[2];
         float maxH = vertices[2];
         
-        //find mix/max of all heights
+        //find min/max of all heights
         for (size_t currentZVertexIdx = 2; currentZVertexIdx < vertices.size(); currentZVertexIdx += 3) {
 
             minH = std::min(minH, vertices[currentZVertexIdx]);
@@ -276,7 +276,7 @@ namespace Noise {
         HeightMap source(resolution, sourceVertices);
         HeightMap dest(resolution, vertices);
 
-        //noise plane
+        //noise plane to generate randomish displacement directions
         std::vector<float> dispPlane(vertices.size(), 0.0f);
 
         std::vector<float> noiseX = GenerateSmoothedDiamondSquare(dispPlane, resolution);

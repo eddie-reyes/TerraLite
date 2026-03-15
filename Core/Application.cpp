@@ -38,7 +38,7 @@ Application::Application(const ApplicationSpecification& specification)
 	}
 	m_WindowHandle = handle;
 
-	std::cout << "GLFW v" << GLFW_VERSION_MAJOR << '.' << GLFW_VERSION_MINOR << " Initialized Window (" << specification.WindowWidth << " x " << specification.WindowHeight << ")\n";
+	std::cout << "glfw v" << GLFW_VERSION_MAJOR << '.' << GLFW_VERSION_MINOR << " Initialized Window (" << specification.WindowWidth << " x " << specification.WindowHeight << ")\n";
 
 	glfwMakeContextCurrent(handle);
 	glfwSwapInterval(1);
@@ -62,6 +62,7 @@ Application::Application(const ApplicationSpecification& specification)
 Application::~Application()
 {
 
+	m_UIManager.Shutdown();
 	glfwTerminate();
 	s_Application = nullptr;
 
@@ -88,7 +89,7 @@ void Application::Run()
 		lastTime = currentTime;
 
 		m_Renderer.Draw(dt);
-		m_UIManager.Draw(dt);
+		m_UIManager.Draw();
 
 		glfwSwapBuffers(m_WindowHandle);
 
