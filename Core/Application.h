@@ -4,7 +4,7 @@
 
 #include "Renderer/Renderer.h"
 #include "UI/UIManager.h"
-#include "Event.h"
+#include "Events/Event.h"
 
 const unsigned int MIN_WINDOW_WIDTH = 1280;
 const unsigned int MIN_WINDOW_HEIGHT = 720;
@@ -14,7 +14,6 @@ struct ApplicationSpecification
 	std::string Name;
 	unsigned int WindowWidth;
 	unsigned int WindowHeight;
-	unsigned int HeightMapResolution;
 };
 
 class Application

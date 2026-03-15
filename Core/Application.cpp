@@ -38,7 +38,7 @@ Application::Application(const ApplicationSpecification& specification)
 	}
 	m_WindowHandle = handle;
 
-	std::cout << "glfw v" << GLFW_VERSION_MAJOR << '.' << GLFW_VERSION_MINOR << " Initialized Window (" << specification.WindowWidth << " x " << specification.WindowHeight << ")\n";
+	std::cout << "[System] glfw v" << GLFW_VERSION_MAJOR << '.' << GLFW_VERSION_MINOR << " Initialized Window (" << specification.WindowWidth << " x " << specification.WindowHeight << ")\n";
 
 	glfwMakeContextCurrent(handle);
 	glfwSwapInterval(1);
@@ -49,7 +49,7 @@ Application::Application(const ApplicationSpecification& specification)
 		return;
 	}
 
-	std::cout << "glad v" << GLAD_VERSION_MAJOR(loadGLresult) << '.' << GLAD_VERSION_MINOR(loadGLresult) << " Initialized\n";
+	std::cout << "[System] glad v" << GLAD_VERSION_MAJOR(loadGLresult) << '.' << GLAD_VERSION_MINOR(loadGLresult) << " Initialized\n";
 
 	Renderer::Utils::InitOpenGLDebugMessageCallback();
 

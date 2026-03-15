@@ -7,8 +7,8 @@
 #include "TerrainGeometry.h" 
 #include "VertexArray.h"
 #include "IndexBuffer.h"
-#include "../InputEvents.h"
-#include "../WindowEvents.h"
+#include "../Events/InputEvents.h"
+#include "../Events/WindowEvents.h"
 
 #include <memory>
 

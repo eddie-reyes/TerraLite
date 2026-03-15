@@ -14,6 +14,7 @@ namespace UI {
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; 
+
 		bool GLFWresult = ImGui_ImplGlfw_InitForOpenGL(window, true);
 
 		if (!GLFWresult) {
@@ -26,7 +27,7 @@ namespace UI {
 			std::cerr << "Failed to initialize ImGui OpenGL backend. Cannot proceed!" << std::endl;
 		}
 
-		std::cout << "ImGui Initialized" << "\n";
+		std::cout << "[System] ImGui v" << ImGui::GetVersion() << " Initialized" << "\n";
 
 		m_UIHovered = &io.WantCaptureMouse;
 

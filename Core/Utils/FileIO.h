@@ -10,7 +10,7 @@
 
 namespace FileIO {
 
-	void SaveHeightMapToFile(std::vector<float>& vertices, size_t resolution, int ZScale) {
+	inline void SaveHeightMapToFile(std::vector<float>& vertices, size_t resolution, int ZScale) {
 
 		std::vector<uint8_t> heightValues(resolution);
 

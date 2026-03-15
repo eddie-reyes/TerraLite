@@ -31,7 +31,6 @@ namespace UI {
             {
                 auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
 
-                if (ImGui::MenuItem("Create")) { /* Do something */ }
                 if (ImGui::MenuItem("Open", "Ctrl+O")) { /* Do something */ } 
                 if (ImGui::MenuItem("Save", "Ctrl+S")) {
                 
