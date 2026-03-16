@@ -25,3 +25,12 @@ The terrain generation methods/algorithms in this projects source are based on t
     * Export heightmap as .png
  
 # Preview
+<img src="Public/preview1.png" alt="" width="500"/>&nbsp;&nbsp;<img src="Public/preview2.png" alt="" width="500"/>
+
+# Build
+
+Project files and build are generated using CMake. I reccommend creating a folder called build and running 
+```
+cmake ..
+```
+from that directory. This will generate relevant project files which you can then use to build and run.
