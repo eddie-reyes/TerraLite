@@ -16,7 +16,7 @@ The terrain generation methods/algorithms in this projects source are based on t
 * Noise Generation
     * Diamond Square (1/f noise)
     * Voronoi diagrams (for feature points)
-    * Perlin Noise
+    * Pertubation displacement
 * Erosion simulation
     * Combination of hydraulic and thermal erosion techniques
     * Iterative solver that displaces material from high areas to low areas
@@ -28,9 +28,10 @@ The terrain generation methods/algorithms in this projects source are based on t
 <img src="Public/preview1.png" alt="" width="50%"/><img src="Public/preview2.png" alt="" width="50%"/>
 
 # Build
-
-Project files and build are generated using CMake. I reccommend creating a folder called build and running 
+* Build automation requires Python 3.10+ and Jinja2
+  
+Project files and build are generated using CMake. I recommend creating a build folder and running 
 ```
 cmake ..
 ```
-from that directory. This will generate relevant project files which you can then use to build and run.
+from that directory. This will generate relevant project files which you can then use to compile a working executable.
