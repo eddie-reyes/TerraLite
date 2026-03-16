@@ -25,7 +25,7 @@ The terrain generation methods/algorithms in this projects source are based on t
     * Export heightmap as .png
  
 # Preview
-<img src="Public/preview1.png" alt="" width="500"/>&nbsp;&nbsp;<img src="Public/preview2.png" alt="" width="500"/>
+<img src="Public/preview1.png" alt="" width="50%"/><img src="Public/preview2.png" alt="" width="50%"/>
 
 # Build
 
