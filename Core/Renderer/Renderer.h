@@ -15,7 +15,7 @@
 constexpr float ORBIT_SPEED = 0.3;
 constexpr glm::vec4 BG_COLOR = { 0.0f, 0.2f, 0.4f, 1.0f };
 constexpr glm::vec4 DEFAULT_OPAQUE_COLOR = { 0.8f, 0.8f, 0.8f, 1.0f };
-constexpr glm::vec2 FOV_RANGE = { 15.0f, 70.0f };
+constexpr glm::vec2 FOV_RANGE = { 10.0f, 70.0f };
 
 namespace Renderer {
 

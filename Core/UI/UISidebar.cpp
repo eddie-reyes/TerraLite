@@ -9,7 +9,7 @@ namespace UI {
 
 
 	}
-
+	
 	UISidebar::~UISidebar() {
 
 
@@ -34,6 +34,7 @@ namespace UI {
 		if (ImGui::Begin("##sidebar", nullptr, m_windowFlags))
 		{
 
+			ImGui::PushItemWidth(-1.0f);
 			NewSection("Transform", true);
 
 			ImGui::Text("Z Scale");
@@ -99,7 +100,8 @@ namespace UI {
 			ImGui::SliderFloat("##erosion_talus", &exposedVars.ErosionTalus, 0.0, 16.0, "%.3f", m_sliderFlags);
 			if (ImGui::IsItemDeactivatedAfterEdit()) renderer.RebuildGeometryAndUpdateBuffers();
 			if (ImGui::Checkbox("Enabled##4", &exposedVars.ErosionEnabled)) renderer.RebuildGeometryAndUpdateBuffers();
-			
+			ImGui::PopItemWidth();
+
 		}
 
 		ImGui::End();

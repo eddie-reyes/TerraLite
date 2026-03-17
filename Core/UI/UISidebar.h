@@ -17,6 +17,7 @@ namespace UI {
 
 		void NewSection(const char* title, bool topSection = false);
 
+
 	private:
 
 		ImGuiWindowFlags m_windowFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus;
