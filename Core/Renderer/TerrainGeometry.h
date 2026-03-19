@@ -72,12 +72,10 @@ namespace Renderer
 
 		void BuildPlane();
 		void ApplyNoise();
+		void CalculateNormals();
 
 		GeometryVertexData& GetVertexData() { return m_vertexData; }
 		size_t GetTriangleCount() const { return m_triangleCount; }
-
-		void CalculateNormals();
-
 		static ExposedVars& GetExposedVars();
 
 		void ClearAllBuffers();
@@ -85,7 +83,6 @@ namespace Renderer
 	private:
 
 		size_t m_Resolution = 128;
-
 		size_t m_triangleCount = 0;
 
 		GeometryVertexData m_vertexData;

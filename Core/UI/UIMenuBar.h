@@ -9,8 +9,6 @@ namespace UI {
 
 	public:
 
-		UIMenuBar();
-		~UIMenuBar();
 		void Draw();
 
 	private:

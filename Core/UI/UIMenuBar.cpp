@@ -3,23 +3,9 @@
 #include "UIMenuBar.h"
 #include "../Application.h"
 #include "../Utils/FileIO.h"
-#include <vector>
 
 
 namespace UI {
-
-    
-	UIMenuBar::UIMenuBar() {
-
-		
-
-	}
-
-	UIMenuBar::~UIMenuBar() {
-
-
-
-	}
 
 
 	void UIMenuBar::Draw() {
@@ -30,8 +16,17 @@ namespace UI {
             if (ImGui::BeginMenu("File"))
             {
                 auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
+                auto& renderer = Renderer::Renderer::Get();
 
-                if (ImGui::MenuItem("Open", "Ctrl+O")) { /* Do something */ } 
+                if (ImGui::MenuItem("Open", "Ctrl+O")) { 
+                
+                    if (FileIO::OpenHeightMap(*exposedVars.TerrainVertices)) {
+
+                        renderer.RebuildGeometryAndUpdateBuffers(false, false);
+
+                    }
+                
+                } 
                 if (ImGui::MenuItem("Save", "Ctrl+S")) {
                 
                     FileIO::SaveHeightMapToFile(*exposedVars.TerrainVertices, exposedVars.Resolution);

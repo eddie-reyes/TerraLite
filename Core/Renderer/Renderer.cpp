@@ -184,13 +184,14 @@ namespace Renderer {
 		return true;
 	}
 
-	void Renderer::RebuildGeometryAndUpdateBuffers(bool shouldRebuildPlane)
+	void Renderer::RebuildGeometryAndUpdateBuffers(bool shouldRebuildPlane, bool shouldGenerateNoise)
 	{
 		GeometryVertexData& terrainVertexData = m_TerrainGeometry.GetVertexData();
 
 		if (shouldRebuildPlane) m_TerrainGeometry.BuildPlane(); //rebuild plane on resolution change
 
-		m_TerrainGeometry.ApplyNoise();
+		if (shouldGenerateNoise) m_TerrainGeometry.ApplyNoise();
+
 		m_TerrainGeometry.CalculateNormals();
 
 		if (shouldRebuildPlane) {

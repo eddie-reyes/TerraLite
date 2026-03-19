@@ -106,7 +106,7 @@ namespace Renderer {
 		bool OnWindowResize(WindowResizeEvent& event);
 		bool OnMouseScrolled(MouseScrolledEvent& event);
 
-		void RebuildGeometryAndUpdateBuffers(bool shouldRebuildPlane = false);
+		void RebuildGeometryAndUpdateBuffers(bool shouldRebuildPlane = false, bool shouldGenerateNoise = true);
 
 
 	private:

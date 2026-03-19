@@ -23,6 +23,7 @@ The terrain generation methods/algorithms in this projects source are based on t
     * Samples Von Neumman neighborhoods for efficency
 * I/O
     * Export heightmap as .png
+    * Import supported heightmaps
  
 # Preview
 <img src="Public/preview1.png" alt="" width="50%"/><img src="Public/preview2.png" alt="" width="50%"/>
