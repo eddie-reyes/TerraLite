@@ -13,29 +13,7 @@ Citation: Olsen, Jacob. "Realtime procedural terrain generation." (2004): 31.
 
 namespace Noise {
 
-    struct HeightMap
-    {
-        int size;
-        std::vector<float>& data;
-
-        HeightMap(int n, std::vector<float>& vertices) : size(n), data(vertices) {};
-
-        float& At(int x, int y) const
-        {
-            x = (x % size + size) % size;
-            y = (y % size + size) % size;
-            //assuming +Z is height component
-            return data[(y * size + x) * 3 + 2];
-        }
-
-        void Set(int x, int y, float val) {
-
-            x = (x % size + size) % size;
-            y = (y % size + size) % size;
-            data[(y * size + x) * 3 + 2] = val;
-        }
-
-    };
+    
 
     inline void normalizeZValues(std::vector<float>& vertices) {
 
@@ -52,7 +30,7 @@ namespace Noise {
 
         }
 
-        //edge case if somehow the heightmap is a plane (or is almost a plane)
+        //edge case if somehow the Renderer::HeightMap is a plane (or is almost a plane)
         float range = maxH - minH;
         if (range <= 1e-8f)
             return;
@@ -88,7 +66,7 @@ namespace Noise {
 
         auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
 
-        HeightMap hm(resolution, vertices);
+        Renderer::HeightMap hm(resolution, vertices);
 
         //initialize corners to random value -- NOTE: We use a uniform distribution instead of a gaussian distribution (not ideal). We opt for the former because its faster
         hm.Set(0, 0, Utils::randomFloatUniform(-0.5, 0.5));
@@ -183,7 +161,7 @@ namespace Noise {
     {
         auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
 
-        HeightMap hm(resolution, vertices);
+        Renderer::HeightMap hm(resolution, vertices);
 
         int cellsPerAxis = exposedVars.VoronoiCellsPerAxis;
         int pointsPerCell = exposedVars.VoronoiFeaturePointsPerCell;
@@ -226,7 +204,7 @@ namespace Noise {
     //////////
     inline std::vector<float> GeneratePerlinNoise(std::vector<float>& vertices, size_t resolution) {
 
-        HeightMap hm(resolution, vertices);
+        Renderer::HeightMap hm(resolution, vertices);
 
         for(int y = 0; y < resolution; ++y)
         {
@@ -244,7 +222,7 @@ namespace Noise {
     ////////////////
     //PERTURBATION// -- removes seams caused by voronoi by displacing original noise
     ////////////////
-    inline float BilinearInterp(HeightMap& source, float fx, float fy) {
+    inline float BilinearInterp(Renderer::HeightMap& source, float fx, float fy) {
 
         int x0 = (int)std::floor(fx);
         int y0 = (int)std::floor(fy);
@@ -273,8 +251,8 @@ namespace Noise {
         //save copy of original noise to sample from
         std::vector<float> sourceVertices = vertices;
 
-        HeightMap source(resolution, sourceVertices);
-        HeightMap dest(resolution, vertices);
+        Renderer::HeightMap source(resolution, sourceVertices);
+        Renderer::HeightMap dest(resolution, vertices);
 
         //noise plane to generate randomish displacement directions
         std::vector<float> dispPlane(vertices.size(), 0.0f);
@@ -314,7 +292,7 @@ namespace Noise {
 
         auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
 
-        HeightMap hm(resolution, vertices);
+        Renderer::HeightMap hm(resolution, vertices);
 
         // rotated Von Neumann neighborhood:
         // lower-left, lower-right, upper-left, upper-right

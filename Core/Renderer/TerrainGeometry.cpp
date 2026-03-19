@@ -30,11 +30,11 @@ namespace Renderer {
 		m_vertexData.vertices.reserve(m_Resolution * m_Resolution * 3);
 		m_vertexData.indices.reserve(m_Resolution * m_Resolution * 6);
 
-		for (size_t i = 0; i < m_Resolution; i++) {
-			for (size_t j = 0; j < m_Resolution; j++) {
+		for (size_t y = 0; y < m_Resolution; y++) {
+			for (size_t x = 0; x < m_Resolution; x++) {
 
-				float normalizedX = Utils::NormalizeValueRange((float)i, 0, m_Resolution, -1, 1);
-				float normalizedY = Utils::NormalizeValueRange((float)j, 0, m_Resolution, -1, 1);
+				float normalizedX = Utils::NormalizeValueRange((float)y, 0, m_Resolution, -1, 1);
+				float normalizedY = Utils::NormalizeValueRange((float)x, 0, m_Resolution, -1, 1);
 
 				m_vertexData.vertices.push_back(normalizedX);
 				m_vertexData.vertices.push_back(normalizedY);
@@ -42,15 +42,15 @@ namespace Renderer {
 				m_vertexData.vertices.push_back(0.0f);
 
 				//dont build tris for edge vertices
-				if (j < m_Resolution - 1 && i < m_Resolution - 1) {
+				if (x < m_Resolution - 1 && y < m_Resolution - 1) {
 
-					m_vertexData.indices.push_back(i * m_Resolution + j);
-					m_vertexData.indices.push_back(i * m_Resolution + (j + 1));
-					m_vertexData.indices.push_back((i + 1) * m_Resolution + (j + 1));
+					m_vertexData.indices.push_back(y * m_Resolution + x);
+					m_vertexData.indices.push_back(y * m_Resolution + (x + 1));
+					m_vertexData.indices.push_back((y + 1) * m_Resolution + (x + 1));
 
-					m_vertexData.indices.push_back((i + 1) * m_Resolution + (j + 1));
-					m_vertexData.indices.push_back((i + 1) * m_Resolution + j);
-					m_vertexData.indices.push_back(i * m_Resolution + j);
+					m_vertexData.indices.push_back((y + 1) * m_Resolution + (x + 1));
+					m_vertexData.indices.push_back((y + 1) * m_Resolution + x);
+					m_vertexData.indices.push_back(y * m_Resolution + x);
 
 					m_triangleCount += 2;
 				}
@@ -100,23 +100,23 @@ namespace Renderer {
 
 		float sideLength = 4.0f / m_Resolution;
 
+		HeightMap hm(m_Resolution, m_vertexData.vertices);
+
 		//central differencing solver
 		//1. Get indices of neighboring vertices (left, right, up, down)
 		//2. Differentiate along X and Y axis to get the normal vector components (dx, dy)
 		//3. Z component is the side length of the grid cell
 		//4. Normalize
 
-		for (size_t i = 0 ; i < m_Resolution; i++) {
-			for (size_t j = 0; j < m_Resolution; j++) {
+		for (size_t y = 0 ; y < m_Resolution; y++) {
+			for (size_t x = 0; x < m_Resolution; x++) {
 
-				size_t index = (i * m_Resolution + j) * 3;
+				float centerHeight = hm.At(x, y);
 
-				float centerHeight = m_vertexData.vertices[index + 2];
-
-				float leftHeight = (j > 0) ? m_vertexData.vertices[index - 1] : centerHeight;
-				float rightHeight = (j < m_Resolution - 1) ? m_vertexData.vertices[index + 3 + 2] : centerHeight;
-				float upHeight = (i > 0) ? m_vertexData.vertices[index - m_Resolution * 3 + 2] : centerHeight;
-				float downHeight = (i < m_Resolution - 1) ? m_vertexData.vertices[index + m_Resolution * 3 + 2] : centerHeight;
+				float leftHeight = (x > 0) ? hm.At(x - 1, y) : centerHeight;
+				float rightHeight = (x < m_Resolution - 1) ? hm.At(x + 1, y) : centerHeight;
+				float upHeight = (y > 0) ? hm.At(x, y - 1) : centerHeight;
+				float downHeight = (y < m_Resolution - 1) ? hm.At(x, y + 1) : centerHeight;
 
 				float dx = rightHeight - leftHeight;
 				float dy = downHeight - upHeight;
