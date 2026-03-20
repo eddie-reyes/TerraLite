@@ -12,53 +12,7 @@ Citation: Olsen, Jacob. "Realtime procedural terrain generation." (2004): 31.
 */
 
 namespace Noise {
-
     
-
-    inline void normalizeZValues(std::vector<float>& vertices) {
-
-        auto& exposedVars = Renderer::TerrainGeometry::GetExposedVars();
-
-        float minH = vertices[2];
-        float maxH = vertices[2];
-        
-        //find min/max of all heights
-        for (size_t currentZVertexIdx = 2; currentZVertexIdx < vertices.size(); currentZVertexIdx += 3) {
-
-            minH = std::min(minH, vertices[currentZVertexIdx]);
-            maxH = std::max(maxH, vertices[currentZVertexIdx]);
-
-        }
-
-        //edge case if somehow the Renderer::HeightMap is a plane (or is almost a plane)
-        float range = maxH - minH;
-        if (range <= 1e-8f)
-            return;
-
-        //normalize
-        for (size_t currentZVertexIdx = 2; currentZVertexIdx < vertices.size(); currentZVertexIdx += 3) {
-
-            vertices[currentZVertexIdx] = Utils::NormalizeValueRange(vertices[currentZVertexIdx], minH, maxH, -0.5, 0.5) * exposedVars.ZScale;
-            
-        }
-
-    }
-
-    std::vector<float> ExtractZValuesFromVertices(std::vector<float>& vertices)
-    {
-        std::vector<float> values;
-        values.reserve(vertices.size() / 3);
-
-        for (int zIndex = 2; zIndex < vertices.size(); zIndex += 3) {
-
-            values.push_back(vertices[zIndex]);
-            vertices[zIndex] = 0;
-
-        }
-
-        return values;
-    }
-
     //////////////////
     //DIAMOND SQUARE// -- approximates 1/f noise
     //////////////////
@@ -128,9 +82,9 @@ namespace Noise {
             step /= 2;
             if (step == 0) break;
         }
-
-        normalizeZValues(vertices);
-        return ExtractZValuesFromVertices(vertices);
+        
+        Renderer::TerrainGeometry::NormalizeZValues(vertices);
+        return Renderer::TerrainGeometry::ExtractZValuesFromVertices(vertices);
 	}
 
     ///////////
@@ -195,8 +149,8 @@ namespace Noise {
             }
         }
 
-        normalizeZValues(vertices); 
-        return ExtractZValuesFromVertices(vertices);
+        Renderer::TerrainGeometry::NormalizeZValues(vertices);
+        return Renderer::TerrainGeometry::ExtractZValuesFromVertices(vertices);
     }
 
     //////////
@@ -214,8 +168,8 @@ namespace Noise {
             }
         }
 
-        normalizeZValues(vertices);
-        return ExtractZValuesFromVertices(vertices);
+        Renderer::TerrainGeometry::NormalizeZValues(vertices);
+        return Renderer::TerrainGeometry::ExtractZValuesFromVertices(vertices);
 
     }
 
@@ -280,7 +234,7 @@ namespace Noise {
             }
         }
 
-        normalizeZValues(vertices);
+        Renderer::TerrainGeometry::NormalizeZValues(vertices);
 
     }
 

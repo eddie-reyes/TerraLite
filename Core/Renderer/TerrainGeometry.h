@@ -78,6 +78,9 @@ namespace Renderer
 		size_t GetTriangleCount() const { return m_triangleCount; }
 		static ExposedVars& GetExposedVars();
 
+		static void NormalizeZValues(std::vector<float>& vertices);
+		static std::vector<float> ExtractZValuesFromVertices(std::vector<float>& vertices);
+
 		void ClearAllBuffers();
 
 	private:
