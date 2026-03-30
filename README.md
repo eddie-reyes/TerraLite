@@ -28,6 +28,8 @@ The terrain generation methods/algorithms in this projects source are based on t
 # Preview
 <img src="Public/preview1.png" alt="" width="50%"/><img src="Public/preview2.png" alt="" width="50%"/>
 
+You can watch the video I made about TerraLite here: https://youtu.be/2ibV22CyZ3I
+
 # Build
 * Build automation requires Python 3.10+ and Jinja2
   
